@@ -68,105 +68,133 @@ class App(customtkinter.CTk):
         if file_path:
             mat_data = scipy.io.loadmat(file_path)
             data_array = mat_data['data']
-
-            # Obter o campo 'images'
             images = data_array['images']
 
-            # Criar uma lista para armazenar todas as imagens
+            # Criar uma lista para armazenar todas as imagens e seus índices
             image_list = []
-
-            # Percorrer todos os pacientes e imagens
             for patient_idx in range(images.shape[1]):
-                patient_images = images[0, patient_idx]  # Acessar as imagens do paciente
+                patient_images = images[0, patient_idx]
                 for img_idx in range(len(patient_images)):
                     img = patient_images[img_idx]
-                    image_list.append(img)
+                    image_list.append((img, patient_idx, img_idx))
 
-            print("Total de imagens carregadas:", len(image_list))
+            # Criar uma janela para seleção da imagem
+            select_window = tkinter.Toplevel(self)
+            select_window.title("Selecione a Imagem")
 
-            # Selecionar a primeira imagem como exemplo
-            image_data = image_list[0]
+            listbox = tkinter.Listbox(select_window)
+            listbox.pack(fill="both", expand=True)
 
-            # Verificar se image_data é um array NumPy
-            if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
-                return
+            # Adicionar itens à lista com informações do paciente e imagem
+            for idx, (img, patient_idx, img_idx) in enumerate(image_list):
+                listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
 
-            # Normalizar e converter a imagem
-            if image_data.dtype != np.uint8:
-                image_data = (255 * (image_data - np.min(image_data)) / (np.max(image_data) - np.min(image_data))).astype(np.uint8)
+            def on_select(event):
+                selection = listbox.curselection()
+                if selection:
+                    index = selection[0]
+                    image_data = image_list[index][0]
+                    # Fechar a janela de seleção
+                    select_window.destroy()
+                    # Processar a imagem selecionada
+                    self.process_image_data(image_data)
 
-            self.img = Image.fromarray(image_data)
-            if self.img.mode != 'L':
-                self.img = self.img.convert('L')
+            listbox.bind('<<ListboxSelect>>', on_select)
 
-            # Criar janela para seleção da ROI
-            self.crop_window = tkinter.Toplevel(self)
-            self.crop_window.title("Selecione a ROI")
-            self.crop_window.geometry("600x600")
+    def process_image_data(self, image_data):
+        # Verificar se image_data é um array NumPy
+        if not isinstance(image_data, np.ndarray):
+            tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
+            return
 
-            self.canvas = tkinter.Canvas(self.crop_window, width=600, height=600)
-            self.canvas.pack()
+        # Normalizar e converter a imagem
+        if image_data.dtype != np.uint8:
+            image_data = (255 * (image_data - np.min(image_data)) / (np.max(image_data) - np.min(image_data))).astype(np.uint8)
 
-            # Redimensionar a imagem para o canvas
-            self.img_resized = self.img.resize((600, 600))
-            self.tk_img = ImageTk.PhotoImage(self.img_resized)
+        self.img = Image.fromarray(image_data)
+        if self.img.mode != 'L':
+            self.img = self.img.convert('L')
 
-            self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
+        # Criar janela para seleção da ROI
+        self.crop_window = tkinter.Toplevel(self)
+        self.crop_window.title("Selecione a ROI")
+        self.crop_window.geometry("600x600")
 
-            # Eventos do mouse para seleção
-            self.rect = None
-            self.start_x = None
-            self.start_y = None
-            self.crop_coords = None
+        self.canvas = tkinter.Canvas(self.crop_window, width=600, height=600)
+        self.canvas.pack(fill="both", expand=True)
 
-            self.canvas.bind("<ButtonPress-1>", self.on_button_press)
-            self.canvas.bind("<B1-Motion>", self.on_move_press)
-            self.canvas.bind("<ButtonRelease-1>", self.on_button_release)
+        # Redimensionar a imagem para o canvas
+        self.img_resized = self.img.resize((600, 600))
+        self.tk_img = ImageTk.PhotoImage(self.img_resized)
 
-    def on_button_press(self, event):
-        # Salvar posição inicial
-        self.start_x = event.x
-        self.start_y = event.y
+        self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
 
-        # Criar retângulo
-        if not self.rect:
-            self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline='red')
-        else:
-            self.canvas.coords(self.rect, self.start_x, self.start_y, self.start_x, self.start_y)
+        # Eventos do mouse para seleção
+        self.rect = None
+        self.save_button = None
+        self.canvas.bind("<Button-1>", self.on_click)
 
-    def on_move_press(self, event):
-        curX, curY = (event.x, event.y)
-        # Expandir retângulo
-        self.canvas.coords(self.rect, self.start_x, self.start_y, curX, curY)
+    def on_click(self, event):
+        # Limpar retângulo anterior, se existir
+        if self.rect:
+            self.canvas.delete(self.rect)
 
-    def on_button_release(self, event):
-        # Coordenadas finais
-        self.crop_coords = (self.start_x, self.start_y, event.x, event.y)
+        # Tamanho do quadrado em pixels na imagem redimensionada
+        square_size_display = 28 * (600 / self.img.width)
 
+        # Coordenadas do retângulo na imagem redimensionada
+        x1 = event.x - square_size_display / 2
+        y1 = event.y - square_size_display / 2
+        x2 = event.x + square_size_display / 2
+        y2 = event.y + square_size_display / 2
+
+        # Desenhar retângulo verde
+        self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green')
+
+        # Salvar as coordenadas do clique
+        self.click_x = event.x
+        self.click_y = event.y
+
+        # Adicionar botão para salvar recorte, se ainda não existir
+        if not self.save_button:
+            self.save_button = customtkinter.CTkButton(self.crop_window, text="Salvar Recorte", command=self.save_crop)
+            self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)  # Posiciona no canto inferior direito com margens
+
+    def save_crop(self):
         # Mapear coordenadas para o tamanho original
         scale_x = self.img.width / 600
         scale_y = self.img.height / 600
 
-        x1 = int(self.start_x * scale_x)
-        y1 = int(self.start_y * scale_y)
-        x2 = int(event.x * scale_x)
-        y2 = int(event.y * scale_y)
+        # Tamanho do quadrado em pixels na imagem original
+        square_size_original = 28
 
-        x1 = max(0, min(x1, self.img.width))
-        x2 = max(0, min(x2, self.img.width))
-        y1 = max(0, min(y1, self.img.height))
-        y2 = max(0, min(y2, self.img.height))
+        # Coordenadas do retângulo na imagem original
+        x_center = self.click_x * scale_x
+        y_center = self.click_y * scale_y
 
-        # Recortar e redimensionar a imagem
-        crop_box = (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
+        x1 = int(x_center - square_size_original / 2)
+        y1 = int(y_center - square_size_original / 2)
+        x2 = int(x_center + square_size_original / 2)
+        y2 = int(y_center + square_size_original / 2)
+
+        # Garantir que as coordenadas estejam dentro dos limites da imagem
+        x1 = max(0, x1)
+        y1 = max(0, y1)
+        x2 = min(self.img.width, x2)
+        y2 = min(self.img.height, y2)
+
+        # Recortar a imagem
+        crop_box = (x1, y1, x2, y2)
         cropped_img = self.img.crop(crop_box)
-        cropped_img_resized = cropped_img.resize((28, 28))
+
+        # Se o recorte não for exatamente 28x28, redimensionar
+        if cropped_img.size != (28, 28):
+            cropped_img = cropped_img.resize((28, 28))
 
         # Salvar a imagem recortada
         save_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
         if save_path:
-            cropped_img_resized.save(save_path)
+            cropped_img.save(save_path)
             tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}")
 
         # Fechar a janela de recorte
