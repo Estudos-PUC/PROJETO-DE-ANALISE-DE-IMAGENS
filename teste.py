@@ -6,8 +6,9 @@ from PIL import Image, ImageTk
 import numpy as np
 import scipy.io
 
-customtkinter.set_appearance_mode("Dark")  
-customtkinter.set_default_color_theme("dark-blue")  
+customtkinter.set_appearance_mode("Dark")
+customtkinter.set_default_color_theme("dark-blue")
+
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -26,25 +27,32 @@ class App(customtkinter.CTk):
         self.sidebar_frame.grid(row=0, column=0, rowspan=7, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(7, weight=1)
 
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Esteatose Hepática", font=customtkinter.CTkFont(size=18, weight="bold"))
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Esteatose Hepática",
+                                                 font=customtkinter.CTkFont(size=18, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        
-        self.load_image_button = customtkinter.CTkButton(self.sidebar_frame, text="Carregar Imagem e Histograma", command=self.load_image, width=200)
+
+        self.load_image_button = customtkinter.CTkButton(self.sidebar_frame, text="Carregar Imagem e Histograma",
+                                                         command=self.load_image, width=200)
         self.load_image_button.grid(row=1, column=0, padx=20, pady=10)
 
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Recortar ROI", command=self.recortar_roi, width=200)
+        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Recortar ROI",
+                                                        command=self.recortar_roi, width=200)
         self.sidebar_button_1.grid(row=2, column=0, padx=20, pady=10)
 
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, text="Visualizar ROI e Histograma", command=self.sidebar_button_event, width=200)
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, text="Visualizar ROI e Histograma",
+                                                        command=self.sidebar_button_event, width=200)
         self.sidebar_button_2.grid(row=3, column=0, padx=20, pady=10)
 
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Computar GLCM", command=self.sidebar_button_event, width=200)
+        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Computar GLCM",
+                                                        command=self.sidebar_button_event, width=200)
         self.sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
-        
-        self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Caracterizar ROI", command=self.sidebar_button_event, width=200)
+
+        self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Caracterizar ROI",
+                                                        command=self.sidebar_button_event, width=200)
         self.sidebar_button_4.grid(row=5, column=0, padx=20, pady=10)
-        
-        self.sidebar_button_5 = customtkinter.CTkButton(self.sidebar_frame, text="Classificar Imagem", command=self.sidebar_button_event, width=200)
+
+        self.sidebar_button_5 = customtkinter.CTkButton(self.sidebar_frame, text="Classificar Imagem",
+                                                        command=self.sidebar_button_event, width=200)
         self.sidebar_button_5.grid(row=6, column=0, padx=20, pady=10)
 
         # Label para exibir a imagem
@@ -64,6 +72,28 @@ class App(customtkinter.CTk):
             self.image_label.image = img_tk  # Manter referência da imagem
 
     def recortar_roi(self):
+        # Abrir nova janela para seleção de paciente e exibição de imagem
+        self.recorte_window = customtkinter.CTkToplevel(self)
+        self.recorte_window.title("Selecionar Paciente e Recortar ROI")
+        self.recorte_window.geometry("1000x600")
+        
+        # Configurar layout da nova janela (lista à esquerda e imagem à direita)
+        self.recorte_window.grid_columnconfigure(0, weight=1)
+        self.recorte_window.grid_columnconfigure(1, weight=4)
+        self.recorte_window.grid_rowconfigure(0, weight=1)
+
+        # Criar lista de pacientes à esquerda
+        self.patient_listbox = tkinter.Listbox(self.recorte_window)
+        self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        # Criar canvas para exibir imagem à direita
+        self.canvas_frame = customtkinter.CTkFrame(self.recorte_window)
+        self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+
+        self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
+        self.canvas.pack(fill="both", expand=True)
+
+        # Carregar dados .mat e preencher lista de pacientes
         file_path = filedialog.askopenfilename(filetypes=[("MAT files", "*.mat")])
         if file_path:
             mat_data = scipy.io.loadmat(file_path)
@@ -71,72 +101,50 @@ class App(customtkinter.CTk):
             images = data_array['images']
 
             # Criar uma lista para armazenar todas as imagens e seus índices
-            image_list = []
+            self.image_list = []
             for patient_idx in range(images.shape[1]):
                 patient_images = images[0, patient_idx]
                 for img_idx in range(len(patient_images)):
                     img = patient_images[img_idx]
-                    image_list.append((img, patient_idx, img_idx))
+                    self.image_list.append((img, patient_idx, img_idx))
+                    self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
 
-            # Criar uma janela para seleção da imagem
-            select_window = tkinter.Toplevel(self)
-            select_window.title("Selecione a Imagem")
+        # Vincular seleção da lista à exibição da imagem
+        self.patient_listbox.bind('<<ListboxSelect>>', self.on_select)
 
-            listbox = tkinter.Listbox(select_window)
-            listbox.pack(fill="both", expand=True)
+    def on_select(self, event):
+        # Carregar a imagem selecionada
+        selection = self.patient_listbox.curselection()
+        if selection:
+            index = selection[0]
+            image_data = self.image_list[index][0]
 
-            # Adicionar itens à lista com informações do paciente e imagem
-            for idx, (img, patient_idx, img_idx) in enumerate(image_list):
-                listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
+            # Verificar se image_data é um array NumPy
+            if not isinstance(image_data, np.ndarray):
+                tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
+                return
 
-            def on_select(event):
-                selection = listbox.curselection()
-                if selection:
-                    index = selection[0]
-                    image_data = image_list[index][0]
-                    # Fechar a janela de seleção
-                    select_window.destroy()
-                    # Processar a imagem selecionada
-                    self.process_image_data(image_data)
+            # Normalizar e converter a imagem
+            if image_data.dtype != np.uint8:
+                image_data = (255 * (image_data - np.min(image_data)) / (np.max(image_data) - np.min(image_data))).astype(np.uint8)
 
-            listbox.bind('<<ListboxSelect>>', on_select)
+            self.img = Image.fromarray(image_data)
+            if self.img.mode != 'L':
+                self.img = self.img.convert('L')
 
-    def process_image_data(self, image_data):
-        # Verificar se image_data é um array NumPy
-        if not isinstance(image_data, np.ndarray):
-            tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
-            return
+            # Redimensionar a imagem para o canvas
+            self.img_resized = self.img.resize((600, 600))
+            self.tk_img = ImageTk.PhotoImage(self.img_resized)
 
-        # Normalizar e converter a imagem
-        if image_data.dtype != np.uint8:
-            image_data = (255 * (image_data - np.min(image_data)) / (np.max(image_data) - np.min(image_data))).astype(np.uint8)
+            # Exibir a imagem no canvas
+            self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
 
-        self.img = Image.fromarray(image_data)
-        if self.img.mode != 'L':
-            self.img = self.img.convert('L')
-
-        # Criar janela para seleção da ROI
-        self.crop_window = tkinter.Toplevel(self)
-        self.crop_window.title("Selecione a ROI")
-        self.crop_window.geometry("600x600")
-
-        self.canvas = tkinter.Canvas(self.crop_window, width=600, height=600)
-        self.canvas.pack(fill="both", expand=True)
-
-        # Redimensionar a imagem para o canvas
-        self.img_resized = self.img.resize((600, 600))
-        self.tk_img = ImageTk.PhotoImage(self.img_resized)
-
-        self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
-
-        # Eventos do mouse para seleção
-        self.rect = None
-        self.save_button = None
-        self.canvas.bind("<Button-1>", self.on_click)
+            # Vincular clique para desenhar a ROI
+            self.canvas.bind("<Button-1>", self.on_click)
 
     def on_click(self, event):
         # Limpar retângulo anterior, se existir
-        if self.rect:
+        if hasattr(self, 'rect') and self.rect:
             self.canvas.delete(self.rect)
 
         # Tamanho do quadrado em pixels na imagem redimensionada
@@ -156,9 +164,9 @@ class App(customtkinter.CTk):
         self.click_y = event.y
 
         # Adicionar botão para salvar recorte, se ainda não existir
-        if not self.save_button:
-            self.save_button = customtkinter.CTkButton(self.crop_window, text="Salvar Recorte", command=self.save_crop)
-            self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)  # Posiciona no canto inferior direito com margens
+        if not hasattr(self, 'save_button'):
+            self.save_button = customtkinter.CTkButton(self.recorte_window, text="Salvar Recorte", command=self.save_crop)
+            self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
 
     def save_crop(self):
         # Mapear coordenadas para o tamanho original
@@ -197,14 +205,9 @@ class App(customtkinter.CTk):
             cropped_img.save(save_path)
             tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}")
 
-        # Fechar a janela de recorte
-        self.crop_window.destroy()
-
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        customtkinter.set_appearance_mode(new_appearance_mode)
-
     def sidebar_button_event(self):
         print("Botão da barra lateral clicado")
+
 
 if __name__ == "__main__":
     app = App()
