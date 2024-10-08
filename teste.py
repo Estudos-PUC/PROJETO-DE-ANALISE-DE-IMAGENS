@@ -142,6 +142,10 @@ class App(customtkinter.CTk):
             # Vincular clique para desenhar a ROI
             self.canvas.bind("<Button-1>", self.on_click)
 
+            # Salvar o índice do paciente e da imagem selecionados
+            self.selected_patient_idx = self.image_list[index][1]
+            self.selected_img_idx = self.image_list[index][2]
+
     def on_click(self, event):
         # Limpar retângulo anterior, se existir
         if hasattr(self, 'rect') and self.rect:
@@ -199,8 +203,16 @@ class App(customtkinter.CTk):
         if cropped_img.size != (28, 28):
             cropped_img = cropped_img.resize((28, 28))
 
-        # Salvar a imagem recortada
-        save_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
+        # Criar o nome de arquivo padrão
+        filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}"
+
+        # Abrir o diálogo "Salvar Como" com o nome de arquivo padrão
+        save_path = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            initialfile=filename,
+            filetypes=[("PNG files", "*.png")]
+        )
+
         if save_path:
             cropped_img.save(save_path)
             tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}")
