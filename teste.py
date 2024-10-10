@@ -204,7 +204,7 @@ class App(customtkinter.CTk):
             cropped_img = cropped_img.resize((28, 28))
 
         # Criar o nome de arquivo padrão
-        filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}_RIM"
+        filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}"
 
         # Abrir o diálogo "Salvar Como" com o nome de arquivo padrão
         save_path = filedialog.asksaveasfilename(
