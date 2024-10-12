@@ -98,7 +98,7 @@ class ROIHandler:
         y2 = event.y + square_size // 2
 
         # Desenhar retângulo verde
-        self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green')
+        self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green', width=3)
 
         # Salvar as coordenadas do clique
         self.click_x = event.x
