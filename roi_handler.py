@@ -159,5 +159,12 @@ class ROIHandler:
         )
 
         if save_path:
+            # Salvar a imagem recortada
             cropped_img.save(save_path)
-            tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}")
+
+            # Salvar as coordenadas (x1, y1) em um arquivo de texto compartilhado
+            coord_save_path = "ROI_coordinates.txt"
+            with open(coord_save_path, 'a') as f:
+                f.write(f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
+
+            tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}\nCoordenadas salvas em {coord_save_path}")
