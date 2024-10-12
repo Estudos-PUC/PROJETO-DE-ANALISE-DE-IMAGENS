@@ -108,7 +108,9 @@ class ROIHandler:
         if not self.save_button:
             self.save_button = customtkinter.CTkButton(self.recorte_window, text="Salvar Recorte", command=self.save_crop)
             self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
-
+            # Adicionar binding da tecla Enter para salvar recorte
+            self.recorte_window.bind('<Return>', lambda event: self.save_crop())
+    
     def save_crop(self):
         # Tamanho do quadrado em pixels na imagem original
         square_size = 28
