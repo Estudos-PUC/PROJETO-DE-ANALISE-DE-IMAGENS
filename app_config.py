@@ -34,18 +34,14 @@ class AppConfig(customtkinter.CTk):
                                                         command=app.gerar_histograma, width=200)
         self.sidebar_button_2.grid(row=3, column=0, padx=20, pady=10)
 
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Visualizar ROI",
-                                                        command=app.sidebar_button_event, width=200)
-        self.sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
-
         self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Computar GLCM",
                                                         command=app.sidebar_button_event, width=200)
-        self.sidebar_button_4.grid(row=5, column=0, padx=20, pady=10)
+        self.sidebar_button_4.grid(row=4, column=0, padx=20, pady=10)
 
         self.sidebar_button_5 = customtkinter.CTkButton(self.sidebar_frame, text="Caracterizar ROI",
                                                         command=app.sidebar_button_event, width=200)
-        self.sidebar_button_5.grid(row=6, column=0, padx=20, pady=10)
+        self.sidebar_button_5.grid(row=5, column=0, padx=20, pady=10)
 
         self.sidebar_button_6 = customtkinter.CTkButton(self.sidebar_frame, text="Classificar Imagem",
                                                         command=app.sidebar_button_event, width=200)
-        self.sidebar_button_6.grid(row=7, column=0, padx=20, pady=10)
+        self.sidebar_button_6.grid(row=6, column=0, padx=20, pady=10)
