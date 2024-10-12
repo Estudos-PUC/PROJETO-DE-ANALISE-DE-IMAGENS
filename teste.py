@@ -107,7 +107,7 @@ class App(customtkinter.CTk):
         # Abrir nova janela para seleção de paciente e exibição de imagem
         self.recorte_window = customtkinter.CTkToplevel(self)
         self.recorte_window.title("Selecionar Paciente e Recortar ROI")
-        self.recorte_window.geometry("500x300")
+        self.recorte_window.geometry("1000x600")
         
         # Configurar layout da nova janela (lista à esquerda e imagem à direita)
         self.recorte_window.grid_columnconfigure(0, weight=1)
@@ -122,7 +122,7 @@ class App(customtkinter.CTk):
         self.canvas_frame = customtkinter.CTkFrame(self.recorte_window)
         self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        self.canvas = tkinter.Canvas(self.canvas_frame, width=300, height=300)
+        self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
         # Carregar dados .mat e preencher lista de pacientes
