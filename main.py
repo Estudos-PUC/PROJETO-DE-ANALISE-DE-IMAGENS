@@ -21,6 +21,9 @@ class App(customtkinter.CTk):
     def recortar_roi(self):
         self.roi_handler.recortar_roi()
 
+    def calcular_hi(self):
+        self.roi_handler.calcular_hi_e_ajustar_figado()
+
     def sidebar_button_event(self):
         print("Botão da barra lateral clicado")
 

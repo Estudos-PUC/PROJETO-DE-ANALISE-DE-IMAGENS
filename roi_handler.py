@@ -4,6 +4,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
 import scipy.io
+import os
 
 class ROIHandler:
     def __init__(self, app):
@@ -151,3 +152,54 @@ class ROIHandler:
                 f.write(f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
 
             tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}\nCoordenadas salvas em {coord_save_path}")
+
+    def calcular_hi_e_ajustar_figado(self):
+        # Diretórios das ROIs
+        figado_dir = "./figado"
+        rim_dir = "./rim"
+        output_dir = "./Figado_Ajustado"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Arquivo para salvar os valores de HI
+        hi_save_path = "HI_values.txt"
+
+        # Iterar sobre todas as ROIs do fígado
+        with open(hi_save_path, 'w') as hi_file:
+            for filename in os.listdir(figado_dir):
+                if filename.endswith(".png") and "RIM" not in filename:
+                    # Carregar a ROI do fígado e do rim correspondente
+                    figado_path = os.path.join(figado_dir, filename)
+                    rim_path = os.path.join(rim_dir, filename.replace('.png', '_RIM.png'))
+
+                    if not os.path.exists(rim_path):
+                        continue
+
+                    figado_img = Image.open(figado_path).convert("L")
+                    rim_img = Image.open(rim_path).convert("L")
+
+                    # Converter as imagens para arrays NumPy
+                    figado_array = np.array(figado_img)
+                    rim_array = np.array(rim_img)
+
+                    # Calcular a média dos tons de cinza
+                    media_figado = np.mean(figado_array)
+                    media_rim = np.mean(rim_array)
+
+                    # Calcular o índice hepatorenal (HI)
+                    hi = media_figado / media_rim if media_rim != 0 else 1
+
+                    # Salvar o valor de HI no arquivo
+                    hi_file.write(f"{filename.replace('.png', '')}, {hi}\n")
+
+                    # Ajustar os tons de cinza da ROI do fígado
+                    ajustado_figado_array = np.round(figado_array * hi).astype(np.uint8)
+
+                    # Criar imagem ajustada do fígado
+                    ajustado_figado_img = Image.fromarray(ajustado_figado_array)
+
+                    # Salvar a ROI ajustada do fígado
+                    ajustado_figado_path = os.path.join(output_dir, filename)
+                    ajustado_figado_img.save(ajustado_figado_path)
+        
+        # Mostrar todas as mensagens de sucesso no final
+        tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {output_dir}\n valores do HI salvos em {hi_save_path}")
