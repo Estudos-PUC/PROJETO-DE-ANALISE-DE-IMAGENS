@@ -69,17 +69,9 @@ class ROIHandler:
                 tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
                 return
 
-            # Normalizar e converter a imagem
-            if image_data.dtype != np.uint8:
-                image_data = (255 * (image_data - np.min(image_data)) / (np.max(image_data) - np.min(image_data))).astype(np.uint8)
-
             self.img = Image.fromarray(image_data)
-            if self.img.mode != 'L':
-                self.img = self.img.convert('L')
 
-            # Redimensionar a imagem para o canvas
-            self.img_resized = self.img.resize((600, 600))
-            self.tk_img = ImageTk.PhotoImage(self.img_resized)
+            self.tk_img = ImageTk.PhotoImage(self.img)
 
             # Exibir a imagem no canvas
             self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
@@ -96,14 +88,14 @@ class ROIHandler:
         if hasattr(self, 'rect') and self.rect:
             self.canvas.delete(self.rect)
 
-        # Tamanho do quadrado em pixels na imagem redimensionada
-        square_size_display = 28 * (600 / self.img.width)
+        # Tamanho do quadrado em pixels na imagem
+        square_size = 28 
 
-        # Coordenadas do retângulo na imagem redimensionada
-        x1 = event.x - square_size_display / 2
-        y1 = event.y - square_size_display / 2
-        x2 = event.x + square_size_display / 2
-        y2 = event.y + square_size_display / 2
+        # Coordenadas do retângulo na imagem
+        x1 = event.x - square_size // 2
+        y1 = event.y - square_size // 2
+        x2 = event.x + square_size // 2
+        y2 = event.y + square_size // 2
 
         # Desenhar retângulo verde
         self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green')
@@ -118,21 +110,14 @@ class ROIHandler:
             self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
 
     def save_crop(self):
-        # Mapear coordenadas para o tamanho original
-        scale_x = self.img.width / 600
-        scale_y = self.img.height / 600
-
         # Tamanho do quadrado em pixels na imagem original
-        square_size_original = 28
+        square_size = 28
 
         # Coordenadas do retângulo na imagem original
-        x_center = self.click_x * scale_x
-        y_center = self.click_y * scale_y
-
-        x1 = int(x_center - square_size_original / 2)
-        y1 = int(y_center - square_size_original / 2)
-        x2 = int(x_center + square_size_original / 2)
-        y2 = int(y_center + square_size_original / 2)
+        x1 = self.click_x - (square_size // 2)
+        y1 = self.click_y - (square_size // 2)
+        x2 = self.click_x + (square_size // 2)
+        y2 = self.click_y + (square_size // 2)
 
         # Garantir que as coordenadas estejam dentro dos limites da imagem
         x1 = max(0, x1)
@@ -143,10 +128,6 @@ class ROIHandler:
         # Recortar a imagem
         crop_box = (x1, y1, x2, y2)
         cropped_img = self.img.crop(crop_box)
-
-        # Se o recorte não for exatamente 28x28, redimensionar
-        if cropped_img.size != (28, 28):
-            cropped_img = cropped_img.resize((28, 28))
 
         # Criar o nome de arquivo padrão
         filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}"
