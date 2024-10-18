@@ -31,7 +31,10 @@ class App(customtkinter.CTk):
     def sidebar_button_event(self):
         print("Botão da barra lateral clicado")
 
-
+    def calcular_hi_imagem(self):
+        self.roi_handler.calcular_hi_imagem()
+        
+            
 if __name__ == "__main__":
     app = App()
     app.mainloop()

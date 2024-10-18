@@ -44,7 +44,7 @@ class AppConfig:
         self.calcular_hi_button = customtkinter.CTkButton(
             self.sidebar_frame,
             text="Calcular HI",
-            command=app.calcular_hi,
+            command=app.calcular_hi_imagem,
             width=200
         )
         self.calcular_hi_button.grid(row=3, column=0, padx=20, pady=10)

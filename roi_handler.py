@@ -8,6 +8,7 @@ import os
 
 class ROIHandler:
     def __init__(self, app):
+        self.app = app
         self.selected_patient_idx = None
         self.selected_img_idx = None
         self.img = None
@@ -204,3 +205,195 @@ class ROIHandler:
         # Mostrar todas as mensagens de sucesso no final
         tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {output_dir}\n valores do HI salvos em {hi_save_path}")
 
+
+    def calcular_hi_imagem(self):
+        # Abrir nova janela para seleção de paciente e exibição de imagem
+        self.hi_window = customtkinter.CTkToplevel()
+        self.hi_window.title("Selecionar Paciente e Calcular HI")
+        self.hi_window.geometry("1000x600")
+        
+        # Configurar layout da nova janela (lista à esquerda e imagem à direita)
+        self.hi_window.grid_columnconfigure(0, weight=1)
+        self.hi_window.grid_columnconfigure(1, weight=4)
+        self.hi_window.grid_rowconfigure(0, weight=1)
+
+        # Criar lista de pacientes à esquerda
+        self.patient_listbox = tkinter.Listbox(self.hi_window, font=("Arial", 14))
+        self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        # Criar canvas para exibir imagem à direita
+        self.canvas_frame = customtkinter.CTkFrame(self.hi_window)
+        self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+
+        self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
+        self.canvas.pack(fill="both", expand=True)
+
+        # Carregar dados .mat e preencher lista de pacientes
+        file_path = filedialog.askopenfilename(filetypes=[("MAT files", "*.mat")])
+        if file_path:
+            mat_data = scipy.io.loadmat(file_path)
+            data_array = mat_data['data']
+            images = data_array['images']
+
+            # Criar uma lista para armazenar todas as imagens e seus índices
+            self.image_list = []
+            for patient_idx in range(images.shape[1]):
+                patient_images = images[0, patient_idx]
+                for img_idx in range(len(patient_images)):
+                    img = patient_images[img_idx]
+                    self.image_list.append((img, patient_idx, img_idx))
+                    self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
+
+        # Vincular seleção da lista à exibição da imagem
+        self.patient_listbox.bind('<<ListboxSelect>>', self.on_select_hi)
+
+    def on_select_hi(self, event):
+        # Carregar a imagem selecionada
+        selection = self.patient_listbox.curselection()
+        if selection:
+            index = selection[0]
+            image_data = self.image_list[index][0]
+
+            # Verificar se image_data é um array NumPy
+            if not isinstance(image_data, np.ndarray):
+                tkinter.messagebox.showerror("Erro", "Os dados da imagem não são válidos.")
+                return
+
+            self.img = Image.fromarray(image_data).convert("L")
+
+            self.tk_img = ImageTk.PhotoImage(self.img)
+
+            # Limpar qualquer conteúdo anterior no canvas
+            self.canvas.delete("all")
+
+            # Exibir a imagem no canvas
+            self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
+
+            # Vincular clique para selecionar pontos
+            self.canvas.bind("<Button-1>", self.on_click_hi)
+
+            # Salvar o índice do paciente e da imagem selecionados
+            self.selected_patient_idx = self.image_list[index][1]
+            self.selected_img_idx = self.image_list[index][2]
+
+            # Inicializar variáveis para seleção de pontos
+            self.points = []
+            self.rects = []
+
+    def on_click_hi(self, event):
+        if len(self.rects) == 2: return 
+        # Desenhar um pequeno retângulo ao redor do ponto clicado
+        square_size = 28
+        x1 = event.x - square_size // 2
+        y1 = event.y - square_size // 2
+        x2 = event.x + square_size // 2
+        y2 = event.y + square_size // 2
+
+
+        if not len(self.rects) == 2:
+            rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='red', width=2)
+            self.rects.append(rect)
+            # Salvar as coordenadas do clique
+            self.points.append((event.x, event.y))
+
+
+        if len(self.points) == 2:
+            # Após dois pontos selecionados, calcular o HI
+            self.calculate_hi_from_points()
+            # Não precisamos mais desassociar o evento de clique
+            # Em vez disso, resetamos os pontos e retângulos para permitir novas seleções
+
+    def calculate_hi_from_points(self):
+        # Tamanho do quadrado em pixels na imagem original
+        square_size = 28
+
+        # Obter as coordenadas dos dois pontos
+        (x1, y1) = self.points[0]
+        (x2, y2) = self.points[1]
+
+        # Coordenadas na imagem original
+        x1_original = x1
+        y1_original = y1
+        x2_original = x2
+        y2_original = y2
+
+        # Definir caixas ao redor dos pontos
+        box1 = (
+            x1_original - square_size // 2,
+            y1_original - square_size // 2,
+            x1_original + square_size // 2,
+            y1_original + square_size // 2
+        )
+        box2 = (
+            x2_original - square_size // 2,
+            y2_original - square_size // 2,
+            x2_original + square_size // 2,
+            y2_original + square_size // 2
+        )
+
+        # Garantir que as coordenadas estejam dentro dos limites da imagem
+        box1 = (
+            max(0, box1[0]),
+            max(0, box1[1]),
+            min(self.img.width, box1[2]),
+            min(self.img.height, box1[3])
+        )
+        box2 = (
+            max(0, box2[0]),
+            max(0, box2[1]),
+            min(self.img.width, box2[2]),
+            min(self.img.height, box2[3])
+        )
+
+        # Recortar as regiões
+        region1 = self.img.crop(box1)
+        region2 = self.img.crop(box2)
+
+        # Converter as regiões para arrays NumPy
+        array1 = np.array(region1)
+        array2 = np.array(region2)
+
+        # Calcular as médias das regiões
+        media1 = np.mean(array1)
+        media2 = np.mean(array2)
+
+        # Calcular o HI (considerando media2 como rim)
+        hi = media1 / media2 if media2 != 0 else 1
+
+        # Exibir o valor de HI ao usuário
+        tkinter.messagebox.showinfo("HI Calculado", f"O valor do HI é: {hi:.4f}")
+
+        # Ajustar os tons de cinza da ROI do fígado
+        ajustado_array = np.clip(np.round(array1 * hi), 0, 255).astype(np.uint8)
+
+        # Criar imagem ajustada do fígado
+        ajustado_region1 = Image.fromarray(ajustado_array)
+
+        # Diretórios para salvar as ROIs
+        figado_dir = "./figadoTeste"
+        figado_ajustado_dir = "./Figado_AjustadoTeste"
+        os.makedirs(figado_dir, exist_ok=True)
+        os.makedirs(figado_ajustado_dir, exist_ok=True)
+
+        # Criar nomes de arquivo
+        filename_liver_roi = f"ROI_FIGADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
+        filename_liver_roi_ajustado = f"ROI_FIGADO_AJUSTADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
+
+        # Caminhos completos
+        save_path_liver = os.path.join(figado_dir, filename_liver_roi)
+        save_path_liver_ajustado = os.path.join(figado_ajustado_dir, filename_liver_roi_ajustado)
+
+        # Salvar as imagens
+        region1.save(save_path_liver)
+        ajustado_region1.save(save_path_liver_ajustado)
+
+        # Informar ao usuário
+        tkinter.messagebox.showinfo("Salvo", f"ROI do fígado original salva em {save_path_liver}\nROI do fígado ajustada salva em {save_path_liver_ajustado}")
+
+        # Apagar os retângulos desenhados no canvas
+        for rect in self.rects:
+            self.canvas.delete(rect)
+
+        # Resetar as listas de pontos e retângulos
+        self.points = []
+        self.rects = []
