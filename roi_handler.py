@@ -192,7 +192,7 @@ class ROIHandler:
                     hi_file.write(f"{filename.replace('.png', '')}, {hi}\n")
 
                     # Ajustar os tons de cinza da ROI do fígado
-                    ajustado_figado_array = np.round(figado_array * hi).astype(np.uint8)
+                    ajustado_figado_array = np.clip(np.round(figado_array * hi), 0, 255).astype(np.uint8)
 
                     # Criar imagem ajustada do fígado
                     ajustado_figado_img = Image.fromarray(ajustado_figado_array)
@@ -200,6 +200,7 @@ class ROIHandler:
                     # Salvar a ROI ajustada do fígado
                     ajustado_figado_path = os.path.join(output_dir, filename)
                     ajustado_figado_img.save(ajustado_figado_path)
-        
+
         # Mostrar todas as mensagens de sucesso no final
         tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {output_dir}\n valores do HI salvos em {hi_save_path}")
+
