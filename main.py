@@ -4,7 +4,6 @@ from image_handler import ImageHandler
 from roi_handler import ROIHandler
 from glcm_handler import GLCMHandler
 
-# Parte 4: Classe Principal do App
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -29,7 +28,7 @@ class App(customtkinter.CTk):
         self.glcm_handler.computar_glcm_roi_directory()
 
     def sidebar_button_event(self):
-        print("Botão da barra lateral clicado")
+        print("Teste botão lateral")
 
     def calcular_hi_imagem(self):
         self.roi_handler.calcular_hi_imagem()
