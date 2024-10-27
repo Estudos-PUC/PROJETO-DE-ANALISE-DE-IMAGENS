@@ -9,7 +9,7 @@ from skimage.util import img_as_ubyte
 import os
 import tkinter.ttk as ttk
 import pandas as pd  # Para operações de CSV
-import re
+import re # Para RegEx
 
 class GLCMHandler:
     def __init__(self, app):
@@ -24,18 +24,16 @@ class GLCMHandler:
             features = self.process_image(roi_path)
             self.display_features(roi_path, features)
 
-    import re
-
     def computar_glcm_roi_directory(self):
         dir_path = filedialog.askdirectory(title="Selecione o diretório com as ROIs")
         if dir_path:
-            # Get image files
+            # Pegar arquivos de imagens
             image_files = [f for f in os.listdir(dir_path) if f.lower().endswith(
                 ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff'))]
             
-            # Sort files by natural numerical order, with zero-padded numbers
+            # Ordena arquivos com números `zero-padded` na ordem natural
             def natural_sort_key(f):
-                # Extract all number segments and treat them as integers for sorting
+                # Extrai os segmentos e os ordena a partir dos números
                 return [int(num) if num.isdigit() else num for num in re.split(r'(\d+)', f)]
             
             image_files.sort(key=natural_sort_key)
@@ -52,12 +50,10 @@ class GLCMHandler:
                 all_features.append(features)
 
             self.display_features_directory(all_features)
-            # Save to CSV
             self.save_features_to_csv(all_features)
 
     # Calcula a GLCM de uma imagem de acordo com os ângulos possíveis (de 0 a 360),
     # e de acordo com as distâncias estabelecidas `distances`.
-    #
     def process_image(self, roi_path):
         roi_img = Image.open(roi_path).convert("L")
         roi_array = np.array(roi_img)
