@@ -69,7 +69,7 @@ class ROIHandler:
 
             # Verificar se image_data e array NumPy
             if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror("Erro", "Os dados da imagem nao sao validos.")
+                tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
                 return
 
             self.img = Image.fromarray(image_data)
@@ -249,7 +249,7 @@ class ROIHandler:
 
             # Verificar se image_data e um array NumPy
             if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror("Erro", "Os dados da imagem nao sao validos.")
+                tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
                 return
 
             self.img = Image.fromarray(image_data).convert("L")
