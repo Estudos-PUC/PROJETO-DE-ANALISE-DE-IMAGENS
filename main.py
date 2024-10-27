@@ -809,8 +809,7 @@ class ROIHandler:
 
 class SFM:
     """
-    A classe SFM possui dois metodos um para calcular os valores do SFM de apenas uma imagem e outro metodo
-    para calcular de todas as imagens de uma pasta
+    Calcular os valores do SFM de apenas uma imagem e calcular de todas as imagens de uma pasta
 
     Essa é a principal funcao e utilizamos a biblioteca pyfeats:
     features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
