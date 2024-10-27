@@ -9,6 +9,7 @@ from skimage.util import img_as_ubyte
 from itertools import product
 import os
 import tkinter.ttk as ttk
+import pandas as pd  # Added pandas for CSV operations
 
 class GLCMHandler:
     def __init__(self, app):
@@ -40,6 +41,9 @@ class GLCMHandler:
                 all_features.append(features)
 
             self.display_features_directory(all_features)
+
+            # Save to CSV
+            self.save_features_to_csv(all_features)
 
     def process_image(self, roi_path):
         roi_img = Image.open(roi_path).convert("L")
@@ -77,9 +81,9 @@ class GLCMHandler:
             glcm_prob_nonzero = glcm_sum + (glcm_sum == 0) * 1e-10
             entropy = -np.sum(glcm_prob_nonzero * np.log(glcm_prob_nonzero))
 
-            # Store features
-            features[f'Homogeneidade (d={distance})'] = homogeneity
-            features[f'Entropia (d={distance})'] = entropy
+            # Store features with the desired keys
+            features[f'entropy_d{distance}'] = entropy
+            features[f'homogeneity_d{distance}'] = homogeneity
 
         return features
 
@@ -145,7 +149,8 @@ class GLCMHandler:
         table_frame.pack(fill="both", expand=True)
 
         # Use tkinter Treeview to display data in tabular format
-        columns = ['Imagem'] + [key for key in all_features[0] if key != 'Imagem']
+        columns = ['Imagem', 'entropy_d1', 'homogeneity_d1', 'entropy_d2', 'homogeneity_d2',
+                   'entropy_d4', 'homogeneity_d4', 'entropy_d8', 'homogeneity_d8']
         tree = ttk.Treeview(table_frame, columns=columns, show='headings')
         tree.pack(fill="both", expand=True)
 
@@ -162,3 +167,23 @@ class GLCMHandler:
         scrollbar = tkinter.Scrollbar(tree, orient='vertical', command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side='right', fill='y')
+
+    def save_features_to_csv(self, all_features):
+        # Convert the list of feature dictionaries into a DataFrame
+        df = pd.DataFrame(all_features)
+
+        # Ensure columns are in the desired order
+        columns = ['Imagem', 'entropy_d1', 'homogeneity_d1', 'entropy_d2', 'homogeneity_d2',
+                   'entropy_d4', 'homogeneity_d4', 'entropy_d8', 'homogeneity_d8']
+        df = df[columns]
+
+        # Ask user where to save the CSV file
+        csv_path = filedialog.asksaveasfilename(
+            title="Salvar arquivo CSV",
+            defaultextension=".csv",
+            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
+        )
+        if csv_path:
+            # Save the DataFrame to CSV
+            df.to_csv(csv_path, index=False)
+            tkinter.messagebox.showinfo("Sucesso", f"Arquivo CSV salvo em: {csv_path}")
