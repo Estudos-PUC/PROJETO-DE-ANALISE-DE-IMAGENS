@@ -1,0 +1,1001 @@
+Imagem;Classe;Canto Superior - Fígado;Canto Superior - Rim;HI
+ROI_00_0.png;Saudável;(x=329 / y=235);(x=221 / y=195);1.139595496
+ROI_00_1.png;Saudável;(x=334 / y=204);(x=211 / y=190);1.216505928
+ROI_00_2.png;Saudável;(x=298 / y=209);(x=211 / y=194);1.172223333
+ROI_00_3.png;Saudável;(x=325 / y=196);(x=227 / y=192);1.12291306
+ROI_00_4.png;Saudável;(x=301 / y=218);(x=214 / y=189);1.18767933
+ROI_00_5.png;Saudável;(x=317 / y=221);(x=212 / y=197);1.058213552
+ROI_00_6.png;Saudável;(x=314 / y=230);(x=206 / y=192);1.148925281
+ROI_00_7.png;Saudável;(x=342 / y=225);(x=218 / y=191);1.099016324
+ROI_00_8.png;Saudável;(x=328 / y=230);(x=223 / y=189);1.043160002
+ROI_00_9.png;Saudável;(x=337 / y=231);(x=226 / y=197);1.045785978
+ROI_01_0.png;Saudável;(x=292 / y=180);(x=219 / y=249);1.185903653
+ROI_01_1.png;Saudável;(x=241 / y=176);(x=247 / y=248);1.165528189
+ROI_01_2.png;Saudável;(x=244 / y=183);(x=239 / y=255);1.155955482
+ROI_01_3.png;Saudável;(x=278 / y=177);(x=244 / y=249);1.176625575
+ROI_01_4.png;Saudável;(x=328 / y=186);(x=246 / y=249);1.229950067
+ROI_01_5.png;Saudável;(x=279 / y=180);(x=228 / y=244);1.242969722
+ROI_01_6.png;Saudável;(x=288 / y=179);(x=256 / y=248);1.132257766
+ROI_01_7.png;Saudável;(x=211 / y=168);(x=244 / y=249);1.095702838
+ROI_01_8.png;Saudável;(x=302 / y=184);(x=237 / y=243);1.141413361
+ROI_01_9.png;Saudável;(x=269 / y=183);(x=218 / y=249);1.228149681
+ROI_02_0.png;Saudável;(x=304 / y=149);(x=246 / y=188);0.840346247
+ROI_02_1.png;Saudável;(x=261 / y=136);(x=245 / y=187);0.856559003
+ROI_02_2.png;Saudável;(x=277 / y=148);(x=244 / y=193);0.913887449
+ROI_02_3.png;Saudável;(x=261 / y=138);(x=277 / y=196);0.935623118
+ROI_02_4.png;Saudável;(x=275 / y=143);(x=276 / y=196);0.975515426
+ROI_02_5.png;Saudável;(x=256 / y=131);(x=258 / y=198);0.927255452
+ROI_02_6.png;Saudável;(x=241 / y=134);(x=257 / y=201);0.984238755
+ROI_02_7.png;Saudável;(x=316 / y=154);(x=271 / y=190);0.766589257
+ROI_02_8.png;Saudável;(x=298 / y=139);(x=249 / y=190);0.848659654
+ROI_02_9.png;Saudável;(x=264 / y=149);(x=261 / y=190);0.862556615
+ROI_03_0.png;Saudável;(x=323 / y=157);(x=216 / y=143);1.02946055
+ROI_03_1.png;Saudável;(x=273 / y=109);(x=212 / y=130);0.977700725
+ROI_03_2.png;Saudável;(x=285 / y=127);(x=211 / y=131);1.083646996
+ROI_03_3.png;Saudável;(x=346 / y=180);(x=239 / y=140);0.951864905
+ROI_03_4.png;Saudável;(x=351 / y=169);(x=213 / y=133);1.024669576
+ROI_03_5.png;Saudável;(x=345 / y=186);(x=220 / y=137);1.099030086
+ROI_03_6.png;Saudável;(x=266 / y=104);(x=218 / y=128);0.895921092
+ROI_03_7.png;Saudável;(x=341 / y=151);(x=226 / y=143);0.900937908
+ROI_03_8.png;Saudável;(x=357 / y=199);(x=212 / y=124);1.112240576
+ROI_03_9.png;Saudável;(x=328 / y=156);(x=222 / y=129);1.001377907
+ROI_04_0.png;Saudável;(x=308 / y=126);(x=242 / y=156);1.01118118
+ROI_04_1.png;Saudável;(x=327 / y=146);(x=242 / y=156);0.967472707
+ROI_04_2.png;Saudável;(x=364 / y=168);(x=255 / y=162);1.057269504
+ROI_04_3.png;Saudável;(x=301 / y=121);(x=246 / y=162);1.009669574
+ROI_04_4.png;Saudável;(x=391 / y=196);(x=258 / y=158);1.000586087
+ROI_04_5.png;Saudável;(x=360 / y=180);(x=245 / y=212);1.036339411
+ROI_04_6.png;Saudável;(x=310 / y=125);(x=244 / y=165);0.997373867
+ROI_04_7.png;Saudável;(x=354 / y=166);(x=256 / y=169);1.04592625
+ROI_04_8.png;Saudável;(x=376 / y=197);(x=260 / y=164);1.111384543
+ROI_04_9.png;Saudável;(x=378 / y=203);(x=254 / y=163);1.137816484
+ROI_05_0.png;Saudável;(x=324 / y=160);(x=281 / y=191);0.844209354
+ROI_05_1.png;Saudável;(x=317 / y=157);(x=259 / y=190);0.863690008
+ROI_05_2.png;Saudável;(x=336 / y=178);(x=266 / y=185);0.790100536
+ROI_05_3.png;Saudável;(x=371 / y=193);(x=273 / y=184);0.785419329
+ROI_05_4.png;Saudável;(x=310 / y=153);(x=264 / y=190);0.942050434
+ROI_05_5.png;Saudável;(x=393 / y=201);(x=269 / y=189);0.784503838
+ROI_05_6.png;Saudável;(x=322 / y=157);(x=270 / y=186);0.800229089
+ROI_05_7.png;Saudável;(x=358 / y=184);(x=272 / y=191);0.890065339
+ROI_05_8.png;Saudável;(x=313 / y=153);(x=273 / y=190);0.849457413
+ROI_05_9.png;Saudável;(x=343 / y=162);(x=271 / y=186);0.790004412
+ROI_06_0.png;Saudável;(x=313 / y=208);(x=242 / y=225);0.863766104
+ROI_06_1.png;Saudável;(x=292 / y=195);(x=218 / y=228);0.952681506
+ROI_06_2.png;Saudável;(x=270 / y=180);(x=230 / y=242);1.093147601
+ROI_06_3.png;Saudável;(x=300 / y=191);(x=225 / y=243);1.019061922
+ROI_06_4.png;Saudável;(x=299 / y=184);(x=222 / y=239);1.06822749
+ROI_06_5.png;Saudável;(x=333 / y=192);(x=213 / y=238);0.956260408
+ROI_06_6.png;Saudável;(x=277 / y=185);(x=225 / y=240);0.958797635
+ROI_06_7.png;Saudável;(x=270 / y=161);(x=212 / y=239);1.059459161
+ROI_06_8.png;Saudável;(x=295 / y=172);(x=221 / y=243);1.123322983
+ROI_06_9.png;Saudável;(x=297 / y=164);(x=233 / y=245);1.108536954
+ROI_07_0.png;Saudável;(x=342 / y=189);(x=198 / y=222);0.9443416
+ROI_07_1.png;Saudável;(x=342 / y=189);(x=194 / y=220);0.940580454
+ROI_07_2.png;Saudável;(x=360 / y=193);(x=242 / y=219);0.875662205
+ROI_07_3.png;Saudável;(x=345 / y=188);(x=193 / y=224);0.937142944
+ROI_07_4.png;Saudável;(x=350 / y=190);(x=205 / y=215);0.930332913
+ROI_07_5.png;Saudável;(x=367 / y=203);(x=204 / y=215);0.900286989
+ROI_07_6.png;Saudável;(x=357 / y=192);(x=202 / y=223);0.886050697
+ROI_07_7.png;Saudável;(x=372 / y=190);(x=231 / y=215);0.83113445
+ROI_07_8.png;Saudável;(x=329 / y=190);(x=210 / y=223);0.921126925
+ROI_07_9.png;Saudável;(x=361 / y=206);(x=210 / y=219);0.876877197
+ROI_08_0.png;Saudável;(x=321 / y=186);(x=213 / y=193);1.120369388
+ROI_08_1.png;Saudável;(x=316 / y=161);(x=192 / y=187);1.265512216
+ROI_08_2.png;Saudável;(x=308 / y=169);(x=215 / y=185);1.231374059
+ROI_08_3.png;Saudável;(x=315 / y=178);(x=211 / y=193);1.19739028
+ROI_08_4.png;Saudável;(x=317 / y=175);(x=206 / y=194);1.146675968
+ROI_08_5.png;Saudável;(x=299 / y=160);(x=200 / y=188);1.384987399
+ROI_08_6.png;Saudável;(x=298 / y=168);(x=208 / y=193);1.275061822
+ROI_08_7.png;Saudável;(x=321 / y=170);(x=203 / y=188);1.198428853
+ROI_08_8.png;Saudável;(x=299 / y=157);(x=216 / y=209);1.138635022
+ROI_08_9.png;Saudável;(x=329 / y=184);(x=210 / y=201);1.009160822
+ROI_09_0.png;Saudável;(x=327 / y=181);(x=224 / y=187);0.844130939
+ROI_09_1.png;Saudável;(x=325 / y=171);(x=213 / y=180);0.771658872
+ROI_09_2.png;Saudável;(x=314 / y=166);(x=210 / y=180);0.819500943
+ROI_09_3.png;Saudável;(x=309 / y=192);(x=217 / y=182);0.843123961
+ROI_09_4.png;Saudável;(x=318 / y=173);(x=225 / y=189);0.839963609
+ROI_09_5.png;Saudável;(x=317 / y=182);(x=238 / y=184);0.850442232
+ROI_09_6.png;Saudável;(x=324 / y=188);(x=207 / y=176);0.692899843
+ROI_09_7.png;Saudável;(x=334 / y=172);(x=236 / y=177);0.690033732
+ROI_09_8.png;Saudável;(x=321 / y=179);(x=238 / y=190);0.87725103
+ROI_09_9.png;Saudável;(x=331 / y=174);(x=238 / y=195);0.791931459
+ROI_10_0.png;Saudável;(x=330 / y=150);(x=239 / y=198);0.866766006
+ROI_10_1.png;Saudável;(x=308 / y=146);(x=244 / y=199);0.868283483
+ROI_10_2.png;Saudável;(x=347 / y=151);(x=256 / y=203);0.91127784
+ROI_10_3.png;Saudável;(x=343 / y=147);(x=248 / y=194);0.859723802
+ROI_10_4.png;Saudável;(x=327 / y=163);(x=251 / y=203);0.846589814
+ROI_10_5.png;Saudável;(x=325 / y=145);(x=242 / y=199);0.888613861
+ROI_10_6.png;Saudável;(x=351 / y=155);(x=266 / y=191);0.823609996
+ROI_10_7.png;Saudável;(x=326 / y=153);(x=253 / y=200);0.896799312
+ROI_10_8.png;Saudável;(x=327 / y=145);(x=251 / y=199);0.900436747
+ROI_10_9.png;Saudável;(x=333 / y=144);(x=242 / y=199);0.918241297
+ROI_11_0.png;Saudável;(x=334 / y=149);(x=223 / y=178);0.957754683
+ROI_11_1.png;Saudável;(x=364 / y=155);(x=233 / y=178);0.929088186
+ROI_11_2.png;Saudável;(x=347 / y=148);(x=211 / y=181);0.984186685
+ROI_11_3.png;Saudável;(x=355 / y=170);(x=249 / y=189);1.007565884
+ROI_11_4.png;Saudável;(x=365 / y=156);(x=267 / y=188);0.719329155
+ROI_11_5.png;Saudável;(x=348 / y=155);(x=257 / y=186);0.890778993
+ROI_11_6.png;Saudável;(x=376 / y=162);(x=264 / y=180);0.814552742
+ROI_11_7.png;Saudável;(x=343 / y=148);(x=270 / y=186);0.878104825
+ROI_11_8.png;Saudável;(x=335 / y=140);(x=246 / y=185);0.908776295
+ROI_11_9.png;Saudável;(x=359 / y=141);(x=269 / y=183);0.814058614
+ROI_12_0.png;Saudável;(x=330 / y=173);(x=202 / y=182);0.799088304
+ROI_12_1.png;Saudável;(x=322 / y=175);(x=199 / y=186);0.811591721
+ROI_12_2.png;Saudável;(x=313 / y=176);(x=185 / y=182);0.82162592
+ROI_12_3.png;Saudável;(x=306 / y=174);(x=200 / y=192);0.748297904
+ROI_12_4.png;Saudável;(x=304 / y=182);(x=183 / y=181);0.842958005
+ROI_12_5.png;Saudável;(x=298 / y=174);(x=179 / y=172);0.890979892
+ROI_12_6.png;Saudável;(x=327 / y=199);(x=163 / y=179);0.830146216
+ROI_12_7.png;Saudável;(x=294 / y=176);(x=181 / y=179);0.931361751
+ROI_12_8.png;Saudável;(x=300 / y=185);(x=200 / y=191);0.83351161
+ROI_12_9.png;Saudável;(x=314 / y=188);(x=191 / y=180);0.776673294
+ROI_13_0.png;Saudável;(x=350 / y=190);(x=189 / y=169);0.903847319
+ROI_13_1.png;Saudável;(x=324 / y=159);(x=170 / y=162);1.008153785
+ROI_13_2.png;Saudável;(x=334 / y=166);(x=181 / y=155);0.944070813
+ROI_13_3.png;Saudável;(x=333 / y=170);(x=175 / y=152);0.943021808
+ROI_13_4.png;Saudável;(x=349 / y=168);(x=182 / y=161);0.946759221
+ROI_13_5.png;Saudável;(x=338 / y=163);(x=182 / y=157);0.95383744
+ROI_13_6.png;Saudável;(x=341 / y=157);(x=198 / y=150);0.87286052
+ROI_13_7.png;Saudável;(x=350 / y=166);(x=190 / y=143);0.898382692
+ROI_13_8.png;Saudável;(x=340 / y=176);(x=218 / y=155);0.874759096
+ROI_13_9.png;Saudável;(x=340 / y=156);(x=246 / y=154);0.840812373
+ROI_14_0.png;Saudável;(x=302 / y=183);(x=197 / y=174);0.897369182
+ROI_14_1.png;Saudável;(x=318 / y=176);(x=174 / y=169);1.029984319
+ROI_14_2.png;Saudável;(x=298 / y=176);(x=194 / y=174);0.941080042
+ROI_14_3.png;Saudável;(x=291 / y=179);(x=171 / y=171);1.19735842
+ROI_14_4.png;Saudável;(x=299 / y=184);(x=189 / y=171);0.925834297
+ROI_14_5.png;Saudável;(x=299 / y=186);(x=180 / y=173);1.042431705
+ROI_14_6.png;Saudável;(x=295 / y=184);(x=174 / y=157);0.983013745
+ROI_14_7.png;Saudável;(x=326 / y=175);(x=189 / y=183);1.061730259
+ROI_14_8.png;Saudável;(x=337 / y=193);(x=189 / y=176);0.92640706
+ROI_14_9.png;Saudável;(x=321 / y=181);(x=190 / y=171);0.95175943
+ROI_15_0.png;Saudável;(x=370 / y=192);(x=220 / y=117);1.48861708
+ROI_15_1.png;Saudável;(x=342 / y=159);(x=213 / y=125);1.464440131
+ROI_15_2.png;Saudável;(x=333 / y=143);(x=214 / y=110);1.941668489
+ROI_15_3.png;Saudável;(x=326 / y=156);(x=218 / y=123);1.524642322
+ROI_15_4.png;Saudável;(x=349 / y=154);(x=213 / y=120);1.720154753
+ROI_15_5.png;Saudável;(x=374 / y=146);(x=214 / y=127);1.338645667
+ROI_15_6.png;Saudável;(x=351 / y=147);(x=217 / y=111);1.927646306
+ROI_15_7.png;Saudável;(x=353 / y=172);(x=216 / y=112);1.958234249
+ROI_15_8.png;Saudável;(x=350 / y=173);(x=224 / y=104);1.965139116
+ROI_15_9.png;Saudável;(x=360 / y=175);(x=220 / y=111);1.880968895
+ROI_16_0.png;Saudável;(x=310 / y=175);(x=207 / y=197);0.853069173
+ROI_16_1.png;Saudável;(x=313 / y=163);(x=217 / y=201);0.868874738
+ROI_16_2.png;Saudável;(x=307 / y=164);(x=226 / y=201);0.893964454
+ROI_16_3.png;Saudável;(x=297 / y=161);(x=215 / y=194);0.931145987
+ROI_16_4.png;Saudável;(x=283 / y=143);(x=216 / y=198);1.052395675
+ROI_16_5.png;Saudável;(x=282 / y=140);(x=203 / y=191);0.974277548
+ROI_16_6.png;Saudável;(x=280 / y=142);(x=212 / y=200);1.036709213
+ROI_16_7.png;Saudável;(x=288 / y=155);(x=197 / y=193);1.054184861
+ROI_16_8.png;Saudável;(x=284 / y=159);(x=214 / y=185);0.806956137
+ROI_16_9.png;Saudável;(x=266 / y=148);(x=211 / y=198);1.033886717
+ROI_17_0.png;Esteatose Hepática;(x=305 / y=128);(x=234 / y=160);1.17120389
+ROI_17_1.png;Esteatose Hepática;(x=274 / y=118);(x=234 / y=163);1.299469743
+ROI_17_2.png;Esteatose Hepática;(x=288 / y=119);(x=234 / y=156);1.252905376
+ROI_17_3.png;Esteatose Hepática;(x=310 / y=119);(x=223 / y=155);1.162130759
+ROI_17_4.png;Esteatose Hepática;(x=302 / y=124);(x=234 / y=169);1.150179856
+ROI_17_5.png;Esteatose Hepática;(x=290 / y=116);(x=242 / y=161);1.279211038
+ROI_17_6.png;Esteatose Hepática;(x=287 / y=113);(x=249 / y=167);1.305259101
+ROI_17_7.png;Esteatose Hepática;(x=301 / y=132);(x=248 / y=164);1.20227379
+ROI_17_8.png;Esteatose Hepática;(x=296 / y=117);(x=252 / y=163);1.310873721
+ROI_17_9.png;Esteatose Hepática;(x=294 / y=132);(x=249 / y=169);1.192073937
+ROI_18_0.png;Esteatose Hepática;(x=314 / y=123);(x=259 / y=180);1.414158878
+ROI_18_1.png;Esteatose Hepática;(x=301 / y=128);(x=262 / y=182);1.454080538
+ROI_18_2.png;Esteatose Hepática;(x=302 / y=129);(x=267 / y=174);1.471217798
+ROI_18_3.png;Esteatose Hepática;(x=313 / y=120);(x=278 / y=183);1.46488227
+ROI_18_4.png;Esteatose Hepática;(x=309 / y=143);(x=277 / y=183);1.476428237
+ROI_18_5.png;Esteatose Hepática;(x=302 / y=118);(x=282 / y=178);1.551680594
+ROI_18_6.png;Esteatose Hepática;(x=311 / y=128);(x=273 / y=180);1.46856033
+ROI_18_7.png;Esteatose Hepática;(x=315 / y=129);(x=285 / y=186);1.454086666
+ROI_18_8.png;Esteatose Hepática;(x=309 / y=129);(x=275 / y=181);1.419437019
+ROI_18_9.png;Esteatose Hepática;(x=312 / y=126);(x=273 / y=176);1.459132542
+ROI_19_0.png;Esteatose Hepática;(x=271 / y=160);(x=290 / y=241);2.000467071
+ROI_19_1.png;Esteatose Hepática;(x=276 / y=169);(x=312 / y=274);2.178550273
+ROI_19_2.png;Esteatose Hepática;(x=282 / y=173);(x=311 / y=267);2.189490897
+ROI_19_3.png;Esteatose Hepática;(x=277 / y=156);(x=264 / y=224);1.881128062
+ROI_19_4.png;Esteatose Hepática;(x=266 / y=157);(x=268 / y=222);2.054207638
+ROI_19_5.png;Esteatose Hepática;(x=277 / y=151);(x=276 / y=222);1.934257266
+ROI_19_6.png;Esteatose Hepática;(x=268 / y=154);(x=276 / y=220);1.974120842
+ROI_19_7.png;Esteatose Hepática;(x=286 / y=155);(x=271 / y=222);1.794208514
+ROI_19_8.png;Esteatose Hepática;(x=279 / y=143);(x=271 / y=221);1.876400955
+ROI_19_9.png;Esteatose Hepática;(x=279 / y=166);(x=272 / y=223);1.924498602
+ROI_20_0.png;Esteatose Hepática;(x=314 / y=115);(x=322 / y=196);1.458226517
+ROI_20_1.png;Esteatose Hepática;(x=305 / y=128);(x=314 / y=197);1.32706783
+ROI_20_2.png;Esteatose Hepática;(x=318 / y=133);(x=312 / y=195);1.379882337
+ROI_20_3.png;Esteatose Hepática;(x=320 / y=135);(x=311 / y=201);1.471344127
+ROI_20_4.png;Esteatose Hepática;(x=323 / y=136);(x=305 / y=202);1.610963278
+ROI_20_5.png;Esteatose Hepática;(x=321 / y=132);(x=297 / y=206);1.573772081
+ROI_20_6.png;Esteatose Hepática;(x=314 / y=133);(x=288 / y=206);1.529200808
+ROI_20_7.png;Esteatose Hepática;(x=305 / y=140);(x=289 / y=202);1.502262779
+ROI_20_8.png;Esteatose Hepática;(x=312 / y=142);(x=299 / y=207);1.506542997
+ROI_20_9.png;Esteatose Hepática;(x=327 / y=144);(x=301 / y=207);1.627043681
+ROI_21_0.png;Esteatose Hepática;(x=306 / y=126);(x=274 / y=247);1.629088393
+ROI_21_1.png;Esteatose Hepática;(x=301 / y=110);(x=290 / y=190);1.69041547
+ROI_21_2.png;Esteatose Hepática;(x=287 / y=116);(x=298 / y=191);1.664412091
+ROI_21_3.png;Esteatose Hepática;(x=294 / y=129);(x=283 / y=188);1.498225651
+ROI_21_4.png;Esteatose Hepática;(x=303 / y=122);(x=299 / y=187);1.547952778
+ROI_21_5.png;Esteatose Hepática;(x=288 / y=117);(x=305 / y=180);1.562134284
+ROI_21_6.png;Esteatose Hepática;(x=282 / y=127);(x=292 / y=189);1.630898435
+ROI_21_7.png;Esteatose Hepática;(x=291 / y=128);(x=298 / y=183);1.580394707
+ROI_21_8.png;Esteatose Hepática;(x=286 / y=121);(x=289 / y=187);1.577282912
+ROI_21_9.png;Esteatose Hepática;(x=286 / y=117);(x=299 / y=185);1.661050902
+ROI_22_0.png;Esteatose Hepática;(x=305 / y=158);(x=295 / y=238);1.72723231
+ROI_22_1.png;Esteatose Hepática;(x=303 / y=158);(x=285 / y=236);1.698079315
+ROI_22_2.png;Esteatose Hepática;(x=301 / y=153);(x=291 / y=238);1.81297993
+ROI_22_3.png;Esteatose Hepática;(x=305 / y=168);(x=269 / y=243);1.675477071
+ROI_22_4.png;Esteatose Hepática;(x=302 / y=171);(x=282 / y=245);1.71509721
+ROI_22_5.png;Esteatose Hepática;(x=324 / y=169);(x=279 / y=239);1.56757232
+ROI_22_6.png;Esteatose Hepática;(x=318 / y=177);(x=282 / y=237);1.558107244
+ROI_22_7.png;Esteatose Hepática;(x=312 / y=180);(x=267 / y=237);1.475891244
+ROI_22_8.png;Esteatose Hepática;(x=309 / y=188);(x=273 / y=245);1.649960187
+ROI_22_9.png;Esteatose Hepática;(x=306 / y=179);(x=273 / y=234);1.593038792
+ROI_23_0.png;Esteatose Hepática;(x=275 / y=159);(x=301 / y=296);2.012409454
+ROI_23_1.png;Esteatose Hepática;(x=266 / y=163);(x=304 / y=290);1.943956881
+ROI_23_2.png;Esteatose Hepática;(x=265 / y=162);(x=302 / y=293);2.069848041
+ROI_23_3.png;Esteatose Hepática;(x=269 / y=158);(x=309 / y=290);2.053396775
+ROI_23_4.png;Esteatose Hepática;(x=256 / y=156);(x=299 / y=290);2.007451483
+ROI_23_5.png;Esteatose Hepática;(x=253 / y=159);(x=310 / y=289);2.165390916
+ROI_23_6.png;Esteatose Hepática;(x=264 / y=166);(x=312 / y=291);2.17916384
+ROI_23_7.png;Esteatose Hepática;(x=260 / y=168);(x=309 / y=293);2.008265896
+ROI_23_8.png;Esteatose Hepática;(x=262 / y=171);(x=307 / y=289);1.9884459
+ROI_23_9.png;Esteatose Hepática;(x=265 / y=159);(x=321 / y=270);2.294085415
+ROI_24_0.png;Esteatose Hepática;(x=303 / y=149);(x=275 / y=195);1.063774976
+ROI_24_1.png;Esteatose Hepática;(x=313 / y=151);(x=265 / y=190);1.137230009
+ROI_24_2.png;Esteatose Hepática;(x=323 / y=145);(x=268 / y=194);1.110577567
+ROI_24_3.png;Esteatose Hepática;(x=319 / y=152);(x=267 / y=192);1.138930189
+ROI_24_4.png;Esteatose Hepática;(x=321 / y=158);(x=270 / y=201);1.124921934
+ROI_24_5.png;Esteatose Hepática;(x=320 / y=159);(x=276 / y=200);1.135098979
+ROI_24_6.png;Esteatose Hepática;(x=314 / y=160);(x=278 / y=204);1.18289639
+ROI_24_7.png;Esteatose Hepática;(x=321 / y=156);(x=279 / y=202);1.143201167
+ROI_24_8.png;Esteatose Hepática;(x=329 / y=175);(x=283 / y=207);1.154361183
+ROI_24_9.png;Esteatose Hepática;(x=326 / y=167);(x=280 / y=203);1.171260553
+ROI_25_0.png;Esteatose Hepática;(x=290 / y=143);(x=287 / y=218);1.852255878
+ROI_25_1.png;Esteatose Hepática;(x=275 / y=140);(x=279 / y=215);1.765482604
+ROI_25_2.png;Esteatose Hepática;(x=303 / y=140);(x=282 / y=216);1.846407289
+ROI_25_3.png;Esteatose Hepática;(x=300 / y=157);(x=315 / y=217);1.817989529
+ROI_25_4.png;Esteatose Hepática;(x=268 / y=146);(x=307 / y=224);1.803285386
+ROI_25_5.png;Esteatose Hepática;(x=302 / y=131);(x=270 / y=222);1.974695306
+ROI_25_6.png;Esteatose Hepática;(x=303 / y=154);(x=258 / y=223);1.819197573
+ROI_25_7.png;Esteatose Hepática;(x=293 / y=155);(x=275 / y=219);1.846065542
+ROI_25_8.png;Esteatose Hepática;(x=302 / y=144);(x=279 / y=222);1.994074575
+ROI_25_9.png;Esteatose Hepática;(x=307 / y=136);(x=279 / y=222);1.943166238
+ROI_26_0.png;Esteatose Hepática;(x=343 / y=135);(x=233 / y=139);1.017344864
+ROI_26_1.png;Esteatose Hepática;(x=328 / y=131);(x=239 / y=139);1.029588736
+ROI_26_2.png;Esteatose Hepática;(x=338 / y=131);(x=262 / y=151);1.232797699
+ROI_26_3.png;Esteatose Hepática;(x=338 / y=133);(x=244 / y=143);1.005156273
+ROI_26_4.png;Esteatose Hepática;(x=345 / y=126);(x=259 / y=145);1.149933139
+ROI_26_5.png;Esteatose Hepática;(x=338 / y=133);(x=264 / y=148);1.170637895
+ROI_26_6.png;Esteatose Hepática;(x=338 / y=125);(x=265 / y=148);1.224458672
+ROI_26_7.png;Esteatose Hepática;(x=337 / y=129);(x=246 / y=146);1.009515146
+ROI_26_8.png;Esteatose Hepática;(x=347 / y=129);(x=265 / y=148);1.16538825
+ROI_26_9.png;Esteatose Hepática;(x=330 / y=125);(x=246 / y=141);1.044099169
+ROI_27_0.png;Esteatose Hepática;(x=310 / y=158);(x=235 / y=171);1.322566519
+ROI_27_1.png;Esteatose Hepática;(x=319 / y=161);(x=255 / y=184);1.404263798
+ROI_27_2.png;Esteatose Hepática;(x=321 / y=166);(x=259 / y=187);1.347607376
+ROI_27_3.png;Esteatose Hepática;(x=322 / y=156);(x=290 / y=253);1.489010496
+ROI_27_4.png;Esteatose Hepática;(x=311 / y=161);(x=296 / y=255);1.59258291
+ROI_27_5.png;Esteatose Hepática;(x=311 / y=154);(x=294 / y=251);1.596746734
+ROI_27_6.png;Esteatose Hepática;(x=307 / y=158);(x=305 / y=257);1.719930262
+ROI_27_7.png;Esteatose Hepática;(x=305 / y=142);(x=303 / y=250);1.691718085
+ROI_27_8.png;Esteatose Hepática;(x=310 / y=146);(x=310 / y=250);1.661238655
+ROI_27_9.png;Esteatose Hepática;(x=312 / y=149);(x=308 / y=254);1.706888081
+ROI_28_0.png;Esteatose Hepática;(x=313 / y=142);(x=223 / y=162);1.132888984
+ROI_28_1.png;Esteatose Hepática;(x=312 / y=159);(x=229 / y=159);1.184069324
+ROI_28_2.png;Esteatose Hepática;(x=309 / y=137);(x=208 / y=159);1.103797091
+ROI_28_3.png;Esteatose Hepática;(x=300 / y=144);(x=205 / y=159);1.119232508
+ROI_28_4.png;Esteatose Hepática;(x=317 / y=155);(x=206 / y=154);1.036088598
+ROI_28_5.png;Esteatose Hepática;(x=311 / y=152);(x=221 / y=158);1.170370999
+ROI_28_6.png;Esteatose Hepática;(x=311 / y=170);(x=224 / y=157);1.124332549
+ROI_28_7.png;Esteatose Hepática;(x=309 / y=151);(x=209 / y=159);1.137276801
+ROI_28_8.png;Esteatose Hepática;(x=316 / y=161);(x=227 / y=161);1.118251226
+ROI_28_9.png;Esteatose Hepática;(x=305 / y=156);(x=226 / y=154);1.146246747
+ROI_29_0.png;Esteatose Hepática;(x=337 / y=128);(x=262 / y=166);1.483907498
+ROI_29_1.png;Esteatose Hepática;(x=333 / y=120);(x=256 / y=165);1.546289601
+ROI_29_2.png;Esteatose Hepática;(x=322 / y=117);(x=280 / y=182);1.709794024
+ROI_29_3.png;Esteatose Hepática;(x=335 / y=127);(x=249 / y=202);1.463069771
+ROI_29_4.png;Esteatose Hepática;(x=314 / y=110);(x=244 / y=157);1.546073502
+ROI_29_5.png;Esteatose Hepática;(x=325 / y=117);(x=256 / y=161);1.557723007
+ROI_29_6.png;Esteatose Hepática;(x=328 / y=126);(x=256 / y=160);1.510721439
+ROI_29_7.png;Esteatose Hepática;(x=335 / y=119);(x=248 / y=160);1.482823318
+ROI_29_8.png;Esteatose Hepática;(x=325 / y=110);(x=249 / y=162);1.52898389
+ROI_29_9.png;Esteatose Hepática;(x=335 / y=120);(x=254 / y=161);1.54043023
+ROI_30_0.png;Esteatose Hepática;(x=277 / y=142);(x=233 / y=213);1.834007123
+ROI_30_1.png;Esteatose Hepática;(x=268 / y=149);(x=209 / y=207);1.627975213
+ROI_30_2.png;Esteatose Hepática;(x=275 / y=147);(x=221 / y=210);1.731217542
+ROI_30_3.png;Esteatose Hepática;(x=286 / y=154);(x=226 / y=204);1.669295552
+ROI_30_4.png;Esteatose Hepática;(x=275 / y=142);(x=228 / y=208);1.74392936
+ROI_30_5.png;Esteatose Hepática;(x=286 / y=150);(x=223 / y=207);1.734792133
+ROI_30_6.png;Esteatose Hepática;(x=289 / y=148);(x=225 / y=204);1.737659273
+ROI_30_7.png;Esteatose Hepática;(x=294 / y=158);(x=229 / y=204);1.740347775
+ROI_30_8.png;Esteatose Hepática;(x=294 / y=154);(x=240 / y=214);1.69311735
+ROI_30_9.png;Esteatose Hepática;(x=282 / y=141);(x=235 / y=205);1.7690222
+ROI_31_0.png;Esteatose Hepática;(x=287 / y=133);(x=245 / y=188);1.506279637
+ROI_31_1.png;Esteatose Hepática;(x=290 / y=147);(x=299 / y=232);1.668257418
+ROI_31_2.png;Esteatose Hepática;(x=318 / y=148);(x=293 / y=241);1.701971712
+ROI_31_3.png;Esteatose Hepática;(x=296 / y=150);(x=295 / y=234);1.646388278
+ROI_31_4.png;Esteatose Hepática;(x=307 / y=154);(x=298 / y=238);1.665930814
+ROI_31_5.png;Esteatose Hepática;(x=317 / y=160);(x=300 / y=232);1.693779787
+ROI_31_6.png;Esteatose Hepática;(x=301 / y=150);(x=304 / y=244);1.697224987
+ROI_31_7.png;Esteatose Hepática;(x=297 / y=142);(x=302 / y=243);1.703383087
+ROI_31_8.png;Esteatose Hepática;(x=298 / y=144);(x=298 / y=238);1.783802694
+ROI_31_9.png;Esteatose Hepática;(x=291 / y=136);(x=293 / y=239);1.824407878
+ROI_32_0.png;Esteatose Hepática;(x=323 / y=135);(x=309 / y=214);1.367120506
+ROI_32_1.png;Esteatose Hepática;(x=317 / y=123);(x=298 / y=210);1.404722812
+ROI_32_2.png;Esteatose Hepática;(x=322 / y=117);(x=296 / y=213);1.476788987
+ROI_32_3.png;Esteatose Hepática;(x=308 / y=111);(x=295 / y=216);1.479038303
+ROI_32_4.png;Esteatose Hepática;(x=343 / y=127);(x=279 / y=213);1.390603425
+ROI_32_5.png;Esteatose Hepática;(x=333 / y=118);(x=290 / y=211);1.448224394
+ROI_32_6.png;Esteatose Hepática;(x=346 / y=117);(x=308 / y=211);1.461976261
+ROI_32_7.png;Esteatose Hepática;(x=331 / y=135);(x=284 / y=215);1.349929128
+ROI_32_8.png;Esteatose Hepática;(x=342 / y=120);(x=249 / y=217);1.42193339
+ROI_32_9.png;Esteatose Hepática;(x=321 / y=121);(x=287 / y=212);1.412071107
+ROI_33_0.png;Esteatose Hepática;(x=335 / y=122);(x=304 / y=199);1.763463279
+ROI_33_1.png;Esteatose Hepática;(x=329 / y=126);(x=294 / y=199);1.813270586
+ROI_33_2.png;Esteatose Hepática;(x=337 / y=134);(x=320 / y=210);1.845447116
+ROI_33_3.png;Esteatose Hepática;(x=334 / y=120);(x=322 / y=211);1.947023254
+ROI_33_4.png;Esteatose Hepática;(x=332 / y=122);(x=309 / y=203);1.78662034
+ROI_33_5.png;Esteatose Hepática;(x=337 / y=135);(x=314 / y=206);1.835847884
+ROI_33_6.png;Esteatose Hepática;(x=341 / y=128);(x=301 / y=199);1.593096287
+ROI_33_7.png;Esteatose Hepática;(x=336 / y=129);(x=298 / y=203);1.749959148
+ROI_33_8.png;Esteatose Hepática;(x=346 / y=152);(x=295 / y=196);1.732437853
+ROI_33_9.png;Esteatose Hepática;(x=361 / y=162);(x=305 / y=195);1.541610413
+ROI_34_0.png;Esteatose Hepática;(x=285 / y=147);(x=233 / y=203);1.266825697
+ROI_34_1.png;Esteatose Hepática;(x=283 / y=163);(x=244 / y=267);1.429257157
+ROI_34_2.png;Esteatose Hepática;(x=272 / y=162);(x=244 / y=260);1.46082821
+ROI_34_3.png;Esteatose Hepática;(x=281 / y=179);(x=224 / y=194);1.173736015
+ROI_34_4.png;Esteatose Hepática;(x=294 / y=180);(x=226 / y=199);1.157795546
+ROI_34_5.png;Esteatose Hepática;(x=294 / y=164);(x=242 / y=210);1.220180305
+ROI_34_6.png;Esteatose Hepática;(x=294 / y=164);(x=247 / y=213);1.218542009
+ROI_34_7.png;Esteatose Hepática;(x=283 / y=168);(x=268 / y=241);1.433459655
+ROI_34_8.png;Esteatose Hepática;(x=278 / y=148);(x=247 / y=207);1.359391712
+ROI_34_9.png;Esteatose Hepática;(x=267 / y=153);(x=213 / y=190);1.448145449
+ROI_35_0.png;Esteatose Hepática;(x=250 / y=177);(x=205 / y=238);1.82210391
+ROI_35_1.png;Esteatose Hepática;(x=276 / y=182);(x=202 / y=235);1.862023278
+ROI_35_2.png;Esteatose Hepática;(x=258 / y=185);(x=193 / y=228);1.718820629
+ROI_35_3.png;Esteatose Hepática;(x=262 / y=200);(x=201 / y=236);1.588562676
+ROI_35_4.png;Esteatose Hepática;(x=274 / y=191);(x=206 / y=231);1.683192563
+ROI_35_5.png;Esteatose Hepática;(x=253 / y=172);(x=208 / y=239);1.836143256
+ROI_35_6.png;Esteatose Hepática;(x=272 / y=189);(x=208 / y=239);1.724116649
+ROI_35_7.png;Esteatose Hepática;(x=251 / y=178);(x=205 / y=238);1.743309951
+ROI_35_8.png;Esteatose Hepática;(x=272 / y=179);(x=204 / y=230);1.671712761
+ROI_35_9.png;Esteatose Hepática;(x=265 / y=190);(x=206 / y=239);1.612677103
+ROI_36_0.png;Esteatose Hepática;(x=262 / y=151);(x=249 / y=218);2.278053774
+ROI_36_1.png;Esteatose Hepática;(x=276 / y=158);(x=263 / y=225);2.262954517
+ROI_36_2.png;Esteatose Hepática;(x=309 / y=194);(x=262 / y=221);1.811714159
+ROI_36_3.png;Esteatose Hepática;(x=246 / y=149);(x=254 / y=217);2.167876207
+ROI_36_4.png;Esteatose Hepática;(x=283 / y=162);(x=248 / y=219);2.02636353
+ROI_36_5.png;Esteatose Hepática;(x=268 / y=149);(x=257 / y=225);2.363750191
+ROI_36_6.png;Esteatose Hepática;(x=287 / y=156);(x=274 / y=229);2.116784828
+ROI_36_7.png;Esteatose Hepática;(x=275 / y=164);(x=264 / y=227);2.165251038
+ROI_36_8.png;Esteatose Hepática;(x=311 / y=175);(x=264 / y=225);1.791845695
+ROI_36_9.png;Esteatose Hepática;(x=282 / y=151);(x=266 / y=227);2.276797406
+ROI_37_0.png;Esteatose Hepática;(x=258 / y=139);(x=228 / y=186);1.63281663
+ROI_37_1.png;Esteatose Hepática;(x=275 / y=149);(x=225 / y=189);1.527824307
+ROI_37_2.png;Esteatose Hepática;(x=278 / y=157);(x=229 / y=190);1.522607078
+ROI_37_3.png;Esteatose Hepática;(x=280 / y=145);(x=238 / y=193);1.552665717
+ROI_37_4.png;Esteatose Hepática;(x=278 / y=152);(x=241 / y=196);1.497619291
+ROI_37_5.png;Esteatose Hepática;(x=291 / y=170);(x=243 / y=199);1.507041327
+ROI_37_6.png;Esteatose Hepática;(x=289 / y=176);(x=229 / y=190);1.451325927
+ROI_37_7.png;Esteatose Hepática;(x=286 / y=155);(x=241 / y=198);1.46549999
+ROI_37_8.png;Esteatose Hepática;(x=282 / y=164);(x=244 / y=196);1.466078153
+ROI_37_9.png;Esteatose Hepática;(x=299 / y=183);(x=277 / y=267);1.903599827
+ROI_38_0.png;Esteatose Hepática;(x=254 / y=124);(x=219 / y=190);1.595382875
+ROI_38_1.png;Esteatose Hepática;(x=259 / y=145);(x=235 / y=198);1.596036447
+ROI_38_2.png;Esteatose Hepática;(x=264 / y=143);(x=239 / y=205);1.630466644
+ROI_38_3.png;Esteatose Hepática;(x=247 / y=132);(x=230 / y=192);1.628255434
+ROI_38_4.png;Esteatose Hepática;(x=263 / y=151);(x=231 / y=195);1.621784275
+ROI_38_5.png;Esteatose Hepática;(x=264 / y=137);(x=236 / y=194);1.64
+ROI_38_6.png;Esteatose Hepática;(x=240 / y=137);(x=241 / y=197);1.612661158
+ROI_38_7.png;Esteatose Hepática;(x=260 / y=135);(x=247 / y=204);1.642870075
+ROI_38_8.png;Esteatose Hepática;(x=258 / y=146);(x=243 / y=199);1.575621417
+ROI_38_9.png;Esteatose Hepática;(x=264 / y=149);(x=219 / y=194);1.502942358
+ROI_39_0.png;Esteatose Hepática;(x=282 / y=115);(x=283 / y=183);1.820200732
+ROI_39_1.png;Esteatose Hepática;(x=293 / y=116);(x=272 / y=185);1.942405287
+ROI_39_2.png;Esteatose Hepática;(x=271 / y=130);(x=258 / y=189);1.996649024
+ROI_39_3.png;Esteatose Hepática;(x=293 / y=119);(x=265 / y=180);1.749280701
+ROI_39_4.png;Esteatose Hepática;(x=292 / y=124);(x=270 / y=185);1.823231897
+ROI_39_5.png;Esteatose Hepática;(x=285 / y=122);(x=272 / y=182);1.781866328
+ROI_39_6.png;Esteatose Hepática;(x=278 / y=120);(x=259 / y=189);1.894397635
+ROI_39_7.png;Esteatose Hepática;(x=284 / y=130);(x=295 / y=185);1.894888598
+ROI_39_8.png;Esteatose Hepática;(x=285 / y=125);(x=299 / y=185);1.915957789
+ROI_39_9.png;Esteatose Hepática;(x=281 / y=133);(x=265 / y=186);1.913417381
+ROI_40_0.png;Esteatose Hepática;(x=273 / y=157);(x=200 / y=210);1.398572885
+ROI_40_1.png;Esteatose Hepática;(x=280 / y=184);(x=249 / y=268);1.324263244
+ROI_40_2.png;Esteatose Hepática;(x=270 / y=183);(x=196 / y=197);1.257626634
+ROI_40_3.png;Esteatose Hepática;(x=291 / y=193);(x=194 / y=199);1.26460818
+ROI_40_4.png;Esteatose Hepática;(x=291 / y=200);(x=239 / y=268);1.253819371
+ROI_40_5.png;Esteatose Hepática;(x=272 / y=189);(x=236 / y=266);1.274941419
+ROI_40_6.png;Esteatose Hepática;(x=273 / y=181);(x=238 / y=265);1.306388063
+ROI_40_7.png;Esteatose Hepática;(x=303 / y=190);(x=257 / y=275);1.351613101
+ROI_40_8.png;Esteatose Hepática;(x=262 / y=153);(x=257 / y=270);1.343999636
+ROI_40_9.png;Esteatose Hepática;(x=274 / y=170);(x=257 / y=269);1.268766104
+ROI_41_0.png;Esteatose Hepática;(x=252 / y=162);(x=264 / y=315);1.642221466
+ROI_41_1.png;Esteatose Hepática;(x=236 / y=142);(x=259 / y=320);1.651076589
+ROI_41_2.png;Esteatose Hepática;(x=263 / y=165);(x=264 / y=319);1.623123402
+ROI_41_3.png;Esteatose Hepática;(x=259 / y=173);(x=266 / y=318);1.589018303
+ROI_41_4.png;Esteatose Hepática;(x=216 / y=141);(x=266 / y=321);1.622407357
+ROI_41_5.png;Esteatose Hepática;(x=284 / y=186);(x=266 / y=324);1.658204423
+ROI_41_6.png;Esteatose Hepática;(x=264 / y=171);(x=271 / y=320);1.599800815
+ROI_41_7.png;Esteatose Hepática;(x=236 / y=144);(x=276 / y=320);1.626448881
+ROI_41_8.png;Esteatose Hepática;(x=305 / y=206);(x=266 / y=319);1.47339369
+ROI_41_9.png;Esteatose Hepática;(x=262 / y=161);(x=266 / y=319);1.647126658
+ROI_42_0.png;Esteatose Hepática;(x=280 / y=140);(x=264 / y=251);1.904396445
+ROI_42_1.png;Esteatose Hepática;(x=285 / y=149);(x=263 / y=244);1.853819463
+ROI_42_2.png;Esteatose Hepática;(x=298 / y=163);(x=260 / y=243);1.741588858
+ROI_42_3.png;Esteatose Hepática;(x=292 / y=167);(x=263 / y=249);1.784032119
+ROI_42_4.png;Esteatose Hepática;(x=315 / y=161);(x=265 / y=246);1.804794053
+ROI_42_5.png;Esteatose Hepática;(x=278 / y=150);(x=268 / y=241);1.885253494
+ROI_42_6.png;Esteatose Hepática;(x=291 / y=165);(x=258 / y=245);1.794115298
+ROI_42_7.png;Esteatose Hepática;(x=296 / y=179);(x=271 / y=241);1.745885522
+ROI_42_8.png;Esteatose Hepática;(x=293 / y=165);(x=261 / y=244);1.775233338
+ROI_42_9.png;Esteatose Hepática;(x=301 / y=159);(x=270 / y=238);1.828061704
+ROI_43_0.png;Esteatose Hepática;(x=298 / y=159);(x=174 / y=234);1.218650808
+ROI_43_1.png;Esteatose Hepática;(x=302 / y=158);(x=176 / y=229);1.183002239
+ROI_43_2.png;Esteatose Hepática;(x=294 / y=154);(x=194 / y=230);1.380061137
+ROI_43_3.png;Esteatose Hepática;(x=293 / y=154);(x=185 / y=223);1.293686484
+ROI_43_4.png;Esteatose Hepática;(x=308 / y=163);(x=196 / y=239);1.247342441
+ROI_43_5.png;Esteatose Hepática;(x=276 / y=159);(x=194 / y=238);1.357834309
+ROI_43_6.png;Esteatose Hepática;(x=307 / y=170);(x=185 / y=231);1.250262625
+ROI_43_7.png;Esteatose Hepática;(x=281 / y=160);(x=193 / y=231);1.295007509
+ROI_43_8.png;Esteatose Hepática;(x=279 / y=159);(x=239 / y=212);1.478655977
+ROI_43_9.png;Esteatose Hepática;(x=302 / y=160);(x=244 / y=206);1.353940053
+ROI_44_0.png;Esteatose Hepática;(x=291 / y=177);(x=231 / y=216);1.36244602
+ROI_44_1.png;Esteatose Hepática;(x=288 / y=173);(x=226 / y=210);1.288536886
+ROI_44_2.png;Esteatose Hepática;(x=303 / y=172);(x=234 / y=206);1.322921425
+ROI_44_3.png;Esteatose Hepática;(x=294 / y=152);(x=235 / y=206);1.424170616
+ROI_44_4.png;Esteatose Hepática;(x=289 / y=172);(x=243 / y=206);1.286407483
+ROI_44_5.png;Esteatose Hepática;(x=284 / y=161);(x=242 / y=211);1.443807809
+ROI_44_6.png;Esteatose Hepática;(x=272 / y=149);(x=239 / y=201);1.305426608
+ROI_44_7.png;Esteatose Hepática;(x=280 / y=155);(x=252 / y=214);1.426785786
+ROI_44_8.png;Esteatose Hepática;(x=275 / y=151);(x=258 / y=214);1.525500123
+ROI_44_9.png;Esteatose Hepática;(x=283 / y=148);(x=252 / y=200);1.377280775
+ROI_45_0.png;Esteatose Hepática;(x=273 / y=146);(x=224 / y=197);1.633322545
+ROI_45_1.png;Esteatose Hepática;(x=271 / y=135);(x=209 / y=184);1.661611419
+ROI_45_2.png;Esteatose Hepática;(x=291 / y=127);(x=189 / y=190);1.686417649
+ROI_45_3.png;Esteatose Hepática;(x=258 / y=134);(x=227 / y=190);1.626714948
+ROI_45_4.png;Esteatose Hepática;(x=279 / y=138);(x=233 / y=195);1.559609421
+ROI_45_5.png;Esteatose Hepática;(x=291 / y=141);(x=232 / y=188);1.508873955
+ROI_45_6.png;Esteatose Hepática;(x=261 / y=134);(x=223 / y=202);1.664731629
+ROI_45_7.png;Esteatose Hepática;(x=269 / y=142);(x=218 / y=192);1.750564445
+ROI_45_8.png;Esteatose Hepática;(x=280 / y=145);(x=174 / y=186);1.611445993
+ROI_45_9.png;Esteatose Hepática;(x=296 / y=149);(x=173 / y=195);1.63727825
+ROI_46_0.png;Esteatose Hepática;(x=281 / y=150);(x=217 / y=190);1.222602289
+ROI_46_1.png;Esteatose Hepática;(x=283 / y=171);(x=225 / y=189);1.212479544
+ROI_46_2.png;Esteatose Hepática;(x=300 / y=165);(x=230 / y=200);1.122659462
+ROI_46_3.png;Esteatose Hepática;(x=285 / y=171);(x=214 / y=188);1.193691038
+ROI_46_4.png;Esteatose Hepática;(x=285 / y=158);(x=219 / y=190);1.193516857
+ROI_46_5.png;Esteatose Hepática;(x=286 / y=172);(x=224 / y=196);1.207695972
+ROI_46_6.png;Esteatose Hepática;(x=295 / y=171);(x=221 / y=197);1.190003539
+ROI_46_7.png;Esteatose Hepática;(x=296 / y=188);(x=218 / y=197);1.292201272
+ROI_46_8.png;Esteatose Hepática;(x=286 / y=198);(x=216 / y=198);1.318451828
+ROI_46_9.png;Esteatose Hepática;(x=292 / y=207);(x=214 / y=197);1.447564402
+ROI_47_0.png;Esteatose Hepática;(x=280 / y=154);(x=174 / y=260);1.016769806
+ROI_47_1.png;Esteatose Hepática;(x=269 / y=148);(x=217 / y=221);1.190974311
+ROI_47_2.png;Esteatose Hepática;(x=287 / y=167);(x=229 / y=226);1.203768539
+ROI_47_3.png;Esteatose Hepática;(x=294 / y=184);(x=236 / y=219);1.205410362
+ROI_47_4.png;Esteatose Hepática;(x=298 / y=174);(x=253 / y=232);1.27313476
+ROI_47_5.png;Esteatose Hepática;(x=292 / y=167);(x=239 / y=227);1.241061099
+ROI_47_6.png;Esteatose Hepática;(x=307 / y=177);(x=244 / y=218);1.155842016
+ROI_47_7.png;Esteatose Hepática;(x=285 / y=142);(x=253 / y=220);1.255050472
+ROI_47_8.png;Esteatose Hepática;(x=302 / y=158);(x=240 / y=199);1.220567454
+ROI_47_9.png;Esteatose Hepática;(x=308 / y=184);(x=257 / y=211);1.178293234
+ROI_48_0.png;Esteatose Hepática;(x=310 / y=151);(x=282 / y=235);1.185270449
+ROI_48_1.png;Esteatose Hepática;(x=307 / y=169);(x=280 / y=239);1.159806905
+ROI_48_2.png;Esteatose Hepática;(x=305 / y=169);(x=309 / y=299);1.076240209
+ROI_48_3.png;Esteatose Hepática;(x=271 / y=158);(x=282 / y=236);1.28530518
+ROI_48_4.png;Esteatose Hepática;(x=299 / y=168);(x=277 / y=238);1.078608013
+ROI_48_5.png;Esteatose Hepática;(x=307 / y=166);(x=282 / y=233);1.153166574
+ROI_48_6.png;Esteatose Hepática;(x=283 / y=156);(x=281 / y=235);1.200143164
+ROI_48_7.png;Esteatose Hepática;(x=297 / y=159);(x=279 / y=239);1.143526182
+ROI_48_8.png;Esteatose Hepática;(x=291 / y=162);(x=221 / y=194);1.358900592
+ROI_48_9.png;Esteatose Hepática;(x=286 / y=149);(x=236 / y=197);1.182761714
+ROI_49_0.png;Esteatose Hepática;(x=288 / y=131);(x=283 / y=260);2.190562919
+ROI_49_1.png;Esteatose Hepática;(x=326 / y=134);(x=281 / y=262);2.148164116
+ROI_49_2.png;Esteatose Hepática;(x=331 / y=133);(x=291 / y=261);1.88669983
+ROI_49_3.png;Esteatose Hepática;(x=338 / y=140);(x=287 / y=258);1.890207916
+ROI_49_4.png;Esteatose Hepática;(x=344 / y=145);(x=277 / y=264);1.871160835
+ROI_49_5.png;Esteatose Hepática;(x=268 / y=147);(x=270 / y=263);2.352558741
+ROI_49_6.png;Esteatose Hepática;(x=267 / y=149);(x=276 / y=259);2.154652406
+ROI_49_7.png;Esteatose Hepática;(x=265 / y=140);(x=269 / y=261);2.344534033
+ROI_49_8.png;Esteatose Hepática;(x=342 / y=145);(x=269 / y=261);1.987531623
+ROI_49_9.png;Esteatose Hepática;(x=300 / y=146);(x=265 / y=256);2.091501647
+ROI_50_0.png;Esteatose Hepática;(x=301 / y=157);(x=248 / y=255);1.449445445
+ROI_50_1.png;Esteatose Hepática;(x=318 / y=171);(x=257 / y=261);1.368081471
+ROI_50_2.png;Esteatose Hepática;(x=330 / y=163);(x=259 / y=256);1.396908838
+ROI_50_3.png;Esteatose Hepática;(x=252 / y=149);(x=259 / y=256);1.438582306
+ROI_50_4.png;Esteatose Hepática;(x=301 / y=158);(x=262 / y=254);1.339156056
+ROI_50_5.png;Esteatose Hepática;(x=324 / y=159);(x=261 / y=256);1.339595812
+ROI_50_6.png;Esteatose Hepática;(x=295 / y=157);(x=255 / y=256);1.453488114
+ROI_50_7.png;Esteatose Hepática;(x=305 / y=149);(x=260 / y=259);1.492850248
+ROI_50_8.png;Esteatose Hepática;(x=295 / y=157);(x=264 / y=257);1.460986785
+ROI_50_9.png;Esteatose Hepática;(x=313 / y=170);(x=265 / y=255);1.326748543
+ROI_51_0.png;Esteatose Hepática;(x=297 / y=166);(x=254 / y=239);1.851076845
+ROI_51_1.png;Esteatose Hepática;(x=276 / y=184);(x=258 / y=239);1.588840031
+ROI_51_2.png;Esteatose Hepática;(x=279 / y=192);(x=239 / y=237);1.569728075
+ROI_51_3.png;Esteatose Hepática;(x=297 / y=201);(x=258 / y=240);1.53130712
+ROI_51_4.png;Esteatose Hepática;(x=302 / y=200);(x=247 / y=238);1.573380752
+ROI_51_5.png;Esteatose Hepática;(x=285 / y=201);(x=238 / y=245);1.467621643
+ROI_51_6.png;Esteatose Hepática;(x=304 / y=198);(x=265 / y=248);1.583545726
+ROI_51_7.png;Esteatose Hepática;(x=287 / y=200);(x=258 / y=249);1.488887014
+ROI_51_8.png;Esteatose Hepática;(x=301 / y=205);(x=254 / y=246);1.526104762
+ROI_51_9.png;Esteatose Hepática;(x=293 / y=204);(x=254 / y=245);1.545381648
+ROI_52_0.png;Esteatose Hepática;(x=327 / y=113);(x=246 / y=150);1.342947946
+ROI_52_1.png;Esteatose Hepática;(x=302 / y=112);(x=259 / y=151);1.489127296
+ROI_52_2.png;Esteatose Hepática;(x=306 / y=113);(x=263 / y=156);1.484020918
+ROI_52_3.png;Esteatose Hepática;(x=276 / y=105);(x=266 / y=155);1.53096779
+ROI_52_4.png;Esteatose Hepática;(x=316 / y=111);(x=273 / y=163);1.443082492
+ROI_52_5.png;Esteatose Hepática;(x=296 / y=107);(x=266 / y=160);1.570988344
+ROI_52_6.png;Esteatose Hepática;(x=310 / y=120);(x=262 / y=159);1.465832388
+ROI_52_7.png;Esteatose Hepática;(x=315 / y=117);(x=275 / y=161);1.452994021
+ROI_52_8.png;Esteatose Hepática;(x=317 / y=112);(x=273 / y=160);1.471356011
+ROI_52_9.png;Esteatose Hepática;(x=326 / y=112);(x=269 / y=162);1.335290716
+ROI_53_0.png;Esteatose Hepática;(x=301 / y=178);(x=230 / y=203);1.014280222
+ROI_53_1.png;Esteatose Hepática;(x=298 / y=191);(x=226 / y=203);1.008767606
+ROI_53_2.png;Esteatose Hepática;(x=297 / y=189);(x=233 / y=214);1.090005711
+ROI_53_3.png;Esteatose Hepática;(x=314 / y=198);(x=220 / y=204);1.021700378
+ROI_53_4.png;Esteatose Hepática;(x=309 / y=180);(x=232 / y=211);1.06007417
+ROI_53_5.png;Esteatose Hepática;(x=289 / y=165);(x=227 / y=210);1.06201849
+ROI_53_6.png;Esteatose Hepática;(x=292 / y=187);(x=223 / y=202);1.030406628
+ROI_53_7.png;Esteatose Hepática;(x=300 / y=186);(x=223 / y=205);1.019852271
+ROI_53_8.png;Esteatose Hepática;(x=321 / y=244);(x=223 / y=211);0.870860864
+ROI_53_9.png;Esteatose Hepática;(x=330 / y=268);(x=221 / y=207);0.859633694
+ROI_54_0.png;Esteatose Hepática;(x=325 / y=141);(x=264 / y=186);1.365429323
+ROI_54_1.png;Esteatose Hepática;(x=332 / y=141);(x=274 / y=180);1.299533361
+ROI_54_2.png;Esteatose Hepática;(x=288 / y=128);(x=280 / y=179);1.505808489
+ROI_54_3.png;Esteatose Hepática;(x=338 / y=163);(x=286 / y=182);1.21661432
+ROI_54_4.png;Esteatose Hepática;(x=317 / y=125);(x=289 / y=185);1.414717835
+ROI_54_5.png;Esteatose Hepática;(x=316 / y=128);(x=292 / y=183);1.356680192
+ROI_54_6.png;Esteatose Hepática;(x=288 / y=119);(x=289 / y=185);1.545275214
+ROI_54_7.png;Esteatose Hepática;(x=332 / y=124);(x=292 / y=186);1.232322464
+ROI_54_8.png;Esteatose Hepática;(x=309 / y=120);(x=287 / y=174);1.417956263
+ROI_54_9.png;Esteatose Hepática;(x=329 / y=127);(x=296 / y=181);1.275011963
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
+;;;;
