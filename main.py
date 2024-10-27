@@ -19,6 +19,19 @@ from tkinter import Tk
 SQUARE_SIZE = 28
 
 class App(customtkinter.CTk):
+    """
+    Configurar a interface principal do programa e inicializar manipuladores das imgs.
+    
+    Metodos: 
+        load_image
+        gerar_histograma
+        recortar_roi
+        calcular_hi
+        calcular_glcm
+        sidebar_button_event
+        calcular_hi_imagem
+        calcular_SFM
+    """
     def __init__(self):
         super().__init__()
         self.config = AppConfig(self)
@@ -52,9 +65,14 @@ class App(customtkinter.CTk):
         self.SFM.calcular_para_imagem()
     
 class AppConfig:
+    """
+    Criar janela do programa, configurando a barra lateral com os botoes para manipulacao das imgs.
+    
+    Metodos:
+        create_sidebar
+    """
     def __init__(self, app):
-        # Definir configuracoes iniciais do menu como titulo e tamanho da janela
-
+        # Definir configuracoes iniciais do menu 
         app.title("Diagnostico de Esteatose Hepatica em Exames de Ultrassom")
         app.geometry(f"{1100}x{580}")
         app.grid_columnconfigure(1, weight=1)
@@ -143,6 +161,15 @@ class AppConfig:
         
     
 class ImageHandler:
+    """
+    Carregar a imagem na janela principal, dar zoom na imagem carregada e calcular o histograma.
+    
+    Metodos: 
+        load_image
+        display_image
+        zoom_image
+        gerar_histograma
+    """
     def __init__(self, app):
         self.img = None
         self.img_resized = None
@@ -204,6 +231,17 @@ class ImageHandler:
         plt.show()
         
 class GLCMHandler:
+    """
+    Computar e exibir GLCM  de uma ROI ou de todas as ROIs. 
+    
+    Metodos: 
+        computar_glcm_roi
+        computar_glcm_roi_directory
+        process_image
+        display_features
+        display_features_directory
+        save_features_to_csv
+    """
     def __init__(self, app):
         self.app = app
 
@@ -244,7 +282,7 @@ class GLCMHandler:
             self.display_features_directory(all_features)
             self.save_features_to_csv(all_features)
 
-    # Calcula a GLCM de uma img de acordo com os angulos possiveis (de 0 a 360),
+    # Calcular a GLCM de uma img de acordo com os angulos possiveis (de 0 a 360),
     # e de acordo com as distancias estabelecidas
     def process_image(self, roi_path):
         roi_img = Image.open(roi_path).convert("L")
