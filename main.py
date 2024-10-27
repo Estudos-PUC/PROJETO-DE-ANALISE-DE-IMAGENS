@@ -5,12 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tkinter.messagebox
 import tkinter
-from skimage.feature import graycomatrix, graycoprops # Para GLCM
+from skimage.feature import graycomatrix, graycoprops
 from skimage.util import img_as_ubyte
 import os
 import tkinter.ttk as ttk
-import pandas as pd  # Para operacões de CSV
-import re # Para RegEx
+import pandas as pd
+import re
 import scipy.io
 import pyfeats
 from skimage import io
