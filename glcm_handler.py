@@ -1,15 +1,14 @@
-# glcm_handler.py
-
-import os
 import numpy as np
 from PIL import Image, ImageTk
 import tkinter.messagebox
 import tkinter
 import customtkinter
 from tkinter import filedialog
-import pyfeats
-import re
-import pandas as pd
+from skimage.feature import graycomatrix
+from skimage.util import img_as_ubyte
+from itertools import product
+import os
+import tkinter.ttk as ttk
 
 class GLCMHandler:
     def __init__(self, app):
@@ -21,49 +20,95 @@ class GLCMHandler:
             filetypes=[("PNG files", "*.png"), ("All files", "*.*")]
         )
         if roi_path:
-            roi_img = Image.open(roi_path).convert("L")
-            roi_array = np.array(roi_img)
-            roi_array = roi_array.astype(np.uint8)  # Ensure the image is in uint8 format
+            features = self.process_image(roi_path)
+            self.display_features(roi_path, features)
 
-            distances = [1, 2, 4, 8]
-            angles = np.deg2rad(np.arange(0, 360, 1))  # Angles from 0° to 359°
+    def computar_glcm_roi_directory(self):
+        dir_path = filedialog.askdirectory(title="Selecione o diretório com as ROIs")
+        if dir_path:
+            image_files = [f for f in os.listdir(dir_path) if f.lower().endswith(
+                ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff'))]
+            if not image_files:
+                tkinter.messagebox.showinfo("Informação", "Nenhuma imagem encontrada no diretório selecionado.")
+                return
 
-            # Compute GLCM features using pyfeats
-            features_mean, features_range, labels_mean, labels_range = pyfeats.glcm_features(
-                roi_array,
-                distances=distances,
-                angles=angles,
-                levels=256,
-                symmetric=True,
-                normalized=True,
-                ignore_zeros=True
-            )
+            all_features = []
+            for image_file in image_files:
+                roi_path = os.path.join(dir_path, image_file)
+                features = self.process_image(roi_path)
+                features['Imagem'] = image_file
+                all_features.append(features)
 
-            # Combine features and labels into dictionaries
-            features_mean_dict = dict(zip(labels_mean, features_mean))
-            features_range_dict = dict(zip(labels_range, features_range))
+            self.display_features_directory(all_features)
 
-            # Prepare the features to display (you can choose which ones to show)
-            features_to_display = {}
-            for label in labels_mean:
-                mean_value = features_mean_dict[label]
-                range_value = features_range_dict[label.replace('Mean', 'Range')]
-                features_to_display[f"{label}"] = mean_value
-                features_to_display[f"{label.replace('Mean', 'Range')}"] = range_value
+    def process_image(self, roi_path):
+        roi_img = Image.open(roi_path).convert("L")
+        roi_array = np.array(roi_img)
+        roi_array = img_as_ubyte(roi_array)  # Ensure image is in uint8 format
 
-            self.display_features(roi_path, features_to_display)
+        distances = [1, 2, 4, 8]
+
+        features = {}
+        for distance in distances:
+            # Generate all possible offsets for the given distance
+            offsets = self.generate_offsets(distance)
+            # Initialize GLCM sum
+            glcm_sum = np.zeros((256, 256), dtype=np.float64)
+            for offset in offsets:
+                # Compute GLCM for each offset
+                glcm = graycomatrix(
+                    roi_array,
+                    distances=[distance],
+                    angles=[np.arctan2(offset[1], offset[0])],
+                    levels=256,
+                    symmetric=True,
+                    normed=True
+                )
+                glcm_sum += glcm[:, :, 0, 0]  # Sum GLCMs
+
+            # Normalize the aggregated GLCM
+            glcm_sum /= glcm_sum.sum()
+
+            # Compute Homogeneity
+            i, j = np.indices(glcm_sum.shape)
+            homogeneity = np.sum(glcm_sum / (1 + np.abs(i - j)))
+
+            # Compute Entropy
+            glcm_prob_nonzero = glcm_sum + (glcm_sum == 0) * 1e-10
+            entropy = -np.sum(glcm_prob_nonzero * np.log(glcm_prob_nonzero))
+
+            # Store features
+            features[f'Homogeneidade (d={distance})'] = homogeneity
+            features[f'Entropia (d={distance})'] = entropy
+
+        return features
+
+    def generate_offsets(self, distance):
+        # Generate all integer offsets within the circle of given radius
+        offsets = []
+        for dx in range(-distance, distance + 1):
+            for dy in range(-distance, distance + 1):
+                if dx == 0 and dy == 0:
+                    continue
+                if round(np.hypot(dx, dy)) == distance:
+                    offsets.append((dx, dy))
+        # Remove duplicates
+        offsets = list(set(offsets))
+        return offsets
 
     def display_features(self, roi_path, features):
         # Create a new window to display the features
         feature_window = customtkinter.CTkToplevel(self.app)
         feature_window.title("Descritores de Textura - GLCM")
-        feature_window.geometry("600x600")  # Increased height for more features
+        feature_window.geometry("600x400")
 
         # Display the ROI image
         img_frame = customtkinter.CTkFrame(feature_window)
         img_frame.grid(row=0, column=0, padx=10, pady=10)
+
         img_label = customtkinter.CTkLabel(img_frame, text="ROI Selecionada")
         img_label.pack()
+
         roi_img = Image.open(roi_path).resize((200, 200))
         roi_photo = ImageTk.PhotoImage(roi_img)
         img_canvas = tkinter.Canvas(img_frame, width=200, height=200)
@@ -74,6 +119,7 @@ class GLCMHandler:
         # Display the features
         feature_frame = customtkinter.CTkFrame(feature_window)
         feature_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+
         feature_label = customtkinter.CTkLabel(feature_frame, text="Valores Calculados", font=("Arial", 16))
         feature_label.pack(pady=(0, 10))
 
@@ -88,80 +134,31 @@ class GLCMHandler:
         feature_window.grid_rowconfigure(0, weight=1)
         feature_window.grid_columnconfigure(1, weight=1)
 
-    def calcular_glcm_todas_rois(self):
-        # Prompt the user to select the directory containing the ROIs
-        roi_dir = filedialog.askdirectory(title="Selecione o diretório das ROIs")
-        if not roi_dir:
-            return  # User cancelled the selection
+    def display_features_directory(self, all_features):
+        # Create a new window to display the features
+        feature_window = customtkinter.CTkToplevel(self.app)
+        feature_window.title("Descritores de Textura - GLCM (Diretório)")
+        feature_window.geometry("800x600")
 
-        output_csv = "glcm_all_features.csv"
+        # Create a frame to hold the table
+        table_frame = customtkinter.CTkFrame(feature_window)
+        table_frame.pack(fill="both", expand=True)
 
-        # Prepare lists to store features and labels
-        features_list = []
+        # Use tkinter Treeview to display data in tabular format
+        columns = ['Imagem'] + [key for key in all_features[0] if key != 'Imagem']
+        tree = ttk.Treeview(table_frame, columns=columns, show='headings')
+        tree.pack(fill="both", expand=True)
 
-        # Obtain and sort filenames
-        filenames = [f for f in os.listdir(roi_dir) if f.endswith('.png')]
+        # Define headings
+        for col in columns:
+            tree.heading(col, text=col)
 
-        # Function to extract numbers from filenames
-        def extract_numbers(filename):
-            # Pattern to extract numbers: ROI_XX_YY.png
-            match = re.match(r'ROI_(\d+)_(\d+)\.png', filename)
-            if match:
-                patient_num = int(match.group(1))
-                image_num = int(match.group(2))
-                return (patient_num, image_num)
-            else:
-                # If filename doesn't match the pattern, place it at the end
-                return (float('inf'), float('inf'))
+        # Insert data
+        for features in all_features:
+            row = [features.get(col, '') for col in columns]
+            tree.insert('', tkinter.END, values=row)
 
-        # Sort the filenames
-        filenames_sorted = sorted(filenames, key=extract_numbers)
-
-        # Loop over the sorted filenames
-        for filename in filenames_sorted:
-            roi_path = os.path.join(roi_dir, filename)
-
-            # Load the ROI image
-            roi_img = Image.open(roi_path).convert("L")
-            roi_array = np.array(roi_img).astype(np.uint8)
-
-            distances = [1, 2, 4, 8]
-            angles = np.deg2rad(np.arange(0, 360, 1))  # Angles from 0° to 359°
-
-            # Compute GLCM features using pyfeats
-            features_mean, features_range, labels_mean, labels_range = pyfeats.glcm_features(
-                roi_array,
-                distances=distances,
-                angles=angles,
-                levels=256,
-                symmetric=True,
-                normalized=True,
-                ignore_zeros=True
-            )
-
-            # Combine features and labels into dictionaries
-            features_mean_dict = dict(zip(labels_mean, features_mean))
-            features_range_dict = dict(zip(labels_range, features_range))
-
-            # Combine mean and range features
-            all_features = {}
-            for label in labels_mean:
-                mean_value = features_mean_dict[label]
-                range_value = features_range_dict[label.replace('Mean', 'Range')]
-                all_features[f"{label}"] = mean_value
-                all_features[f"{label.replace('Mean', 'Range')}"] = range_value
-
-            # Add filename and patient/image indices
-            patient_num, image_num = extract_numbers(filename)
-            all_features['filename'] = filename
-            all_features['patient_num'] = patient_num
-            all_features['image_num'] = image_num
-
-            # Append to the features list
-            features_list.append(all_features)
-
-        # Create a DataFrame and save to CSV
-        df = pd.DataFrame(features_list)
-        df.to_csv(output_csv, index=False)
-
-        tkinter.messagebox.showinfo("Concluído", f"Características GLCM calculadas e salvas em {output_csv}")
+        # Add scrollbar
+        scrollbar = tkinter.Scrollbar(tree, orient='vertical', command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side='right', fill='y')

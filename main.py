@@ -26,7 +26,7 @@ class App(customtkinter.CTk):
         self.roi_handler.calcular_hi_e_ajustar_figado()
 
     def calcular_glcm(self):
-        self.glcm_handler.computar_glcm_roi()
+        self.glcm_handler.computar_glcm_roi_directory()
 
     def sidebar_button_event(self):
         print("Botão da barra lateral clicado")
