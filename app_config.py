@@ -14,8 +14,8 @@ class AppConfig:
     # Exibir barra lateral do menu
     def create_sidebar(self, app):
         self.sidebar_frame = customtkinter.CTkFrame(app, width=250, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, rowspan=7, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(8, weight=1)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=8, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(9, weight=1)
 
         # Botao lateral Esteatose Hepática
         self.logo_label = customtkinter.CTkLabel(
@@ -81,6 +81,15 @@ class AppConfig:
         )
         self.caracterizar_roi_button.grid(row=6, column=0, padx=20, pady=10)
 
+        # Botao lateral SFM
+        self.caracterizar_roi_button = customtkinter.CTkButton(
+            self.sidebar_frame,
+            text="Calcular SFM",
+            command=app.calcular_SFM,
+            width=200
+        )
+        self.caracterizar_roi_button.grid(row=7, column=0, padx=20, pady=10)
+
         # Botao lateral Classificar Imagem
         self.classificar_imagem_button = customtkinter.CTkButton(
             self.sidebar_frame,
@@ -88,4 +97,4 @@ class AppConfig:
             command=app.sidebar_button_event,
             width=200
         )
-        self.classificar_imagem_button.grid(row=7, column=0, padx=20, pady=10)
+        self.classificar_imagem_button.grid(row=8, column=0, padx=20, pady=10)

@@ -3,6 +3,7 @@ from app_config import AppConfig
 from image_handler import ImageHandler
 from roi_handler import ROIHandler
 from glcm_handler import GLCMHandler
+from SFM import SFM
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -11,6 +12,7 @@ class App(customtkinter.CTk):
         self.image_handler = ImageHandler(self)
         self.roi_handler = ROIHandler(self)
         self.glcm_handler = GLCMHandler(self)
+        self.SFM = SFM(self)
 
     def load_image(self):
         self.image_handler.load_image()
@@ -25,15 +27,17 @@ class App(customtkinter.CTk):
         self.roi_handler.calcular_hi_e_ajustar_figado()
 
     def calcular_glcm(self):
-        self.glcm_handler.computar_glcm_roi_directory()
+        self.glcm_handler.computar_glcm_roi()
 
     def sidebar_button_event(self):
         print("Teste botão lateral")
 
     def calcular_hi_imagem(self):
         self.roi_handler.calcular_hi_imagem()
-        
-            
+
+    def calcular_SFM(self):
+        self.SFM.calcular_para_imagem()
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()
