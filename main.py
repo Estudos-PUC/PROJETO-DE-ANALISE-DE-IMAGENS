@@ -11,7 +11,7 @@ from skimage.feature import graycomatrix, graycoprops # Para GLCM
 from skimage.util import img_as_ubyte
 import os
 import tkinter.ttk as ttk
-import pandas as pd  # Para operações de CSV
+import pandas as pd  # Para operacões de CSV
 import re # Para RegEx
 
 import scipy.io
@@ -47,7 +47,7 @@ class App(customtkinter.CTk):
         self.glcm_handler.computar_glcm_roi()
 
     def sidebar_button_event(self):
-        print("Teste botão lateral")
+        print("Teste botao lateral")
 
     def calcular_hi_imagem(self):
         self.roi_handler.calcular_hi_imagem()
@@ -59,7 +59,7 @@ class AppConfig:
     def __init__(self, app):
         # Definir configuracoes iniciais do menu como titulo e tamanho da janela
 
-        app.title("Diagnóstico de Esteatose Hepática em Exames de Ultrassom")
+        app.title("Diagnostico de Esteatose Hepatica em Exames de Ultrassom")
         app.geometry(f"{1100}x{580}")
         app.grid_columnconfigure(1, weight=1)
         app.grid_rowconfigure((0, 1, 2), weight=1)
@@ -72,10 +72,10 @@ class AppConfig:
         self.sidebar_frame.grid(row=0, column=0, rowspan=8, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(8, weight=1)
 
-        # Botao lateral Esteatose Hepática
+        # Botao lateral Esteatose Hepatica
         self.logo_label = customtkinter.CTkLabel(
             self.sidebar_frame,
-            text="Esteatose Hepática",
+            text="Esteatose Hepatica",
             font=customtkinter.CTkFont(size=18, weight="bold")
         )
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
@@ -158,7 +158,7 @@ class ImageHandler:
         file_path = filedialog.askopenfilename()
         if file_path:
             self.img = Image.open(file_path)
-            self.img_resized = self.img.copy()  # Inicialmente, a img redimensionada é a original
+            self.img_resized = self.img.copy()  # Inicialmente, a img redimensionada e a original
             self.display_image()
 
             # Vincular eventos de rolagem do mouse para o zoom
@@ -221,7 +221,7 @@ class GLCMHandler:
             self.display_features(roi_path, features)
 
     def computar_glcm_roi_directory(self):
-        dir_path = filedialog.askdirectory(title="Selecione o diretório com as ROIs")
+        dir_path = filedialog.askdirectory(title="Selecione o diretorio com as ROIs")
         if dir_path:
             # Pegar arquivos de imagens
             image_files = [f for f in os.listdir(dir_path) if f.lower().endswith(
@@ -235,7 +235,7 @@ class GLCMHandler:
             image_files.sort(key=natural_sort_key)
 
             if not image_files:
-                tkinter.messagebox.showinfo("Informação", "Nenhuma imagem encontrada no diretório selecionado.")
+                tkinter.messagebox.showinfo("Informacao", "Nenhuma imagem encontrada no diretorio selecionado.")
                 return
 
             all_features = []
@@ -248,12 +248,12 @@ class GLCMHandler:
             self.display_features_directory(all_features)
             self.save_features_to_csv(all_features)
 
-    # Calcula a GLCM de uma img de acordo com os ângulos possíveis (de 0 a 360),
-    # e de acordo com as distâncias estabelecidas `distances`.
+    # Calcula a GLCM de uma img de acordo com os angulos possiveis (de 0 a 360),
+    # e de acordo com as distancias estabelecidas
     def process_image(self, roi_path):
         roi_img = Image.open(roi_path).convert("L")
         roi_array = np.array(roi_img)
-        roi_array = img_as_ubyte(roi_array)  # Imagem está no formato uint8
+        roi_array = img_as_ubyte(roi_array)  # Imagem esta no formato uint8
 
         distances = [1, 2, 4, 8]
         levels = 256
@@ -262,7 +262,7 @@ class GLCMHandler:
 
         for d in distances:
             angles = np.deg2rad(np.arange(0, 360, 1))  
-            # Calula GLCM para todos os ângulos possíveis
+            # Calula GLCM para todos os angulos possiveis
             glcm = graycomatrix(
                 roi_array,
                 distances=[d],
@@ -272,7 +272,7 @@ class GLCMHandler:
                 normed=True
             )
 
-            # Para cada ângulo, calcule a homogeneidade
+            # Para cada angulo, calcule a homogeneidade
             homog = graycoprops(glcm, prop='homogeneity')
             features[f'homogeneity_d{d}'] = np.sum(homog)
 
@@ -320,7 +320,7 @@ class GLCMHandler:
 
     def display_features_directory(self, all_features):
         feature_window = customtkinter.CTkToplevel(self.app)
-        feature_window.title("Descritores de Textura - GLCM (Diretório)")
+        feature_window.title("Descritores de Textura - GLCM (Diretorio)")
         feature_window.geometry("800x600")
 
         table_frame = customtkinter.CTkFrame(feature_window)
@@ -338,7 +338,7 @@ class GLCMHandler:
         tree = ttk.Treeview(table_frame, columns=columns, show='headings')
         tree.pack(fill="both", expand=True)
 
-        # Cabeçalho
+        # Cabecalho
         for col in columns:
             tree.heading(col, text=col)
 
@@ -367,7 +367,7 @@ class GLCMHandler:
         # Reordena colunas para o esperado
         df = df.reindex(columns=columns, fill_value='')
 
-        # Caso o usuário queira salvar em CSV
+        # Caso o usuario queira salvar em CSV
         csv_path = filedialog.asksaveasfilename(
             title="Salvar arquivo CSV",
             defaultextension=".csv",
@@ -768,14 +768,14 @@ class SFM:
         )
         
         if not filepath:
-            print("Seleção de arquivo cancelada pelo usuário.")
+            print("Selecao de arquivo cancelada pelo usuario.")
             return
         
         f = io.imread(filepath, as_gray=True)
         features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
         
         feature_window = customtkinter.CTkToplevel(self.app)
-        feature_window.title("Resultados das Características SFM")
+        feature_window.title("Resultados das Caracteristicas SFM")
         feature_window.geometry("1000x700")
 
         table_frame = customtkinter.CTkFrame(feature_window)
@@ -785,7 +785,7 @@ class SFM:
         text_widget.pack(fill="both", expand=True)
 
         text_widget.insert("end", f"Nome do Arquivo: {os.path.basename(filepath)}\n\n")
-        text_widget.insert("end", "Características:\n")
+        text_widget.insert("end", "Caracteristicas:\n")
         
         for label, feature in zip(labels, features):
             text_widget.insert("end", f"{label}: {feature}\n")
@@ -797,25 +797,25 @@ class SFM:
 
         pil_img = Image.open(filepath)
         pil_img = pil_img.resize((500, 500), Image.LANCZOS)  # Redimensiona a img para 500x500
-        self.tk_img = ImageTk.PhotoImage(pil_img)  # Armazena a img como atributo da instância
+        self.tk_img = ImageTk.PhotoImage(pil_img)  # Armazena a img como atributo da instancia
         
-        img_label = customtkinter.CTkLabel(img_frame, image=self.tk_img, text="")  # Remove o texto padrão
+        img_label = customtkinter.CTkLabel(img_frame, image=self.tk_img, text="")  # Remove o texto padrao
         img_label.pack(expand=True)
 
     def calcular_para_pasta(self):
-        # Abre uma janela para o usuário selecionar o diretório com as imagens
+        # Abre uma janela para o usuario selecionar o diretorio com as imagens
         root = Tk()
         root.withdraw()  # Esconde a janela principal do Tkinter
         directory = filedialog.askdirectory(title="Selecione a pasta com as imagens")
         
-        # Se o usuário cancelar a seleção da pasta, interrompe a execução
+        # Se o usuario cancelar a selecao da pasta, interrompe a execucao
         if not directory:
-            print("Seleção de pasta cancelada pelo usuário.")
+            print("Selecao de pasta cancelada pelo usuario.")
             return
         
         data = []  # Lista para armazenar resultados
         
-        # Loop em todos os arquivos no diretório
+        # Loop em todos os arquivos no diretorio
         for filename in os.listdir(directory):
             if filename.endswith(".png") or filename.endswith(".jpg"):  # Filtra para arquivos de img
                 filepath = os.path.join(directory, filename)
@@ -832,19 +832,19 @@ class SFM:
         columns = ['Filename'] + labels
         df = pd.DataFrame(data, columns=columns)
         
-        # Abre uma janela para o usuário escolher o local de salvamento do arquivo CSV
+        # Abre uma janela para o usuario escolher o local de salvamento do arquivo CSV
         save_path = filedialog.asksaveasfilename(
             defaultextension=".csv",
             initialfile="resultados_sfm_features.csv",
             filetypes=[("CSV files", "*.csv")]
         )
         
-        # Salva o DataFrame em um arquivo CSV se o usuário escolher um caminho
+        # Salva o DataFrame em um arquivo CSV se o usuario escolher um caminho
         if save_path:
             df.to_csv(save_path, index=False)
             print(f"CSV gerado com sucesso em: {save_path}")
         else:
-            print("Salvamento cancelado pelo usuário.")
+            print("Salvamento cancelado pelo usuario.")
             
 if __name__ == "__main__":
     app = App()
