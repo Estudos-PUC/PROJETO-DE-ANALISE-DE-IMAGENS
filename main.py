@@ -374,6 +374,23 @@ class GLCMHandler:
             tkinter.messagebox.showinfo("Sucesso", f"Arquivo CSV salvo em: {csv_path}")
 
 class ROIHandler:    
+
+    """
+    Recortar ROI e calcular HI
+
+    
+    Mestodos:
+        recortar_roi
+        on_select
+        on_click
+        save_crop
+        calcular_hi_e_ajustar_figado
+        calcular_hi_imagem
+        on_select_hi
+        on_click_hi
+        calculate_hi_from_points
+    """
+
     def __init__(self, app):
         self.app = app
         self.selected_patient_idx = None
@@ -750,7 +767,29 @@ class ROIHandler:
         self.points = []
         self.rects = []
 
+
+
 class SFM:
+    """
+    A classe SFM possui dois metodos um para calcular os valores do SFM de apenas uma imagem e outro metodo
+    para calcular de todas as imagens de uma pasta
+
+    Essa é a principal funcao e utilizamos a biblioteca pyfeats:
+    features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
+
+    f: imagem selecionada
+    mask: por padrao none porque a imagem selecionada ja e uma roi
+
+    valores retirados da documentacao da biblioteca
+    self.Lr
+    self.lc
+
+
+    Metodos
+        calcular_para_imagem
+        calcular_para_pasta
+    """
+
 
     def __init__(self, app, Lr=4, Lc=4):
         self.app = app
@@ -811,7 +850,7 @@ class SFM:
         
         data = []  # Lista para armazenar resultados
         
-        # Loop em todos os arquivos no diretorio
+        # Loop em todos os arquivos no diretorio e calcula o SFM para a pasta
         for filename in os.listdir(directory):
             if filename.endswith(".png") or filename.endswith(".jpg"):  # Filtra para arquivos de img
                 filepath = os.path.join(directory, filename)
@@ -824,18 +863,17 @@ class SFM:
                 row = [filename] + features.tolist()
                 data.append(row)
 
-        # Cria um DataFrame com os resultados
+        # Cria um DataFrame com os resultados utilizando pandas
         columns = ['Filename'] + labels
         df = pd.DataFrame(data, columns=columns)
         
-        # Abre uma janela para o usuario escolher o local de salvamento do arquivo CSV
         save_path = filedialog.asksaveasfilename(
             defaultextension=".csv",
             initialfile="resultados_sfm_features.csv",
             filetypes=[("CSV files", "*.csv")]
         )
         
-        # Salva o DataFrame em um arquivo CSV se o usuario escolher um caminho
+        # Salva o DataFrame no arquivo CSV se o usuario escolher um caminho adequado
         if save_path:
             df.to_csv(save_path, index=False)
             print(f"CSV gerado com sucesso em: {save_path}")
