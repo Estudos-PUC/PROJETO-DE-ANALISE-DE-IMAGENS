@@ -9,7 +9,7 @@ class ImageHandler:
     def __init__(self, app):
         self.img = None
         self.img_resized = None
-        self.zoom_scale = 1.0  # Variável para controlar o zoom da img
+        self.zoom_scale = 1.0  # Variavel para controlar o zoom da img
         self.image_label = customtkinter.CTkLabel(app, text="Nenhuma Imagem Carregada")
         self.image_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
