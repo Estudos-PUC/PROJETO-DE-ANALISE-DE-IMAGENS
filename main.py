@@ -15,6 +15,9 @@ import scipy.io
 import pyfeats
 from skimage import io
 from tkinter import Tk
+from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, f1_score
+from sklearn.svm import SVC
+import seaborn as sns
 
 SQUARE_SIZE = 28
 
@@ -31,6 +34,7 @@ class App(customtkinter.CTk):
         sidebar_button_event
         calcular_hi_imagem
         calcular_SFM
+        classificar_imagem_SVM
     """
     def __init__(self):
         super().__init__()
@@ -39,8 +43,11 @@ class App(customtkinter.CTk):
         self.roi_handler = ROIHandler(self)
         self.glcm_handler = GLCMHandler(self)
         self.SFM = SFM(self)
+        self.SVMClassifier = SVMClassifier(self)
 
     def load_image(self):
+        self.SVMClassifier.hide_metrics()
+        self.image_handler.show_label()
         self.image_handler.load_image()
 
     def gerar_histograma(self):
@@ -64,6 +71,13 @@ class App(customtkinter.CTk):
     def calcular_SFM(self):
         self.SFM.calcular_para_imagem()
     
+    def classificar_imagem_SVM(self):
+        self.image_handler.hide_label()
+        self.SVMClassifier.show_metrics()
+        self.SVMClassifier.load_data()
+        self.SVMClassifier.validate()
+        self.SVMClassifier.calculate_metrics()
+        self.SVMClassifier.plot_confusion_matrix()
 class AppConfig:
     """
     Criar janela do programa, configurando a barra lateral com os botoes para manipulacao das imgs.
@@ -83,8 +97,8 @@ class AppConfig:
     # Exibir barra lateral do menu
     def create_sidebar(self, app):
         self.sidebar_frame = customtkinter.CTkFrame(app, width=250, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, rowspan=8, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(8, weight=1)
+        self.sidebar_frame.grid(row=0, column=0, rowspan=9, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(9, weight=1)
 
         # Botao lateral Esteatose Hepatica
         self.logo_label = customtkinter.CTkLabel(
@@ -151,13 +165,22 @@ class AppConfig:
         self.caracterizar_roi_button.grid(row=6, column=0, padx=20, pady=10)
 
         # Botao lateral Classificar Imagem
+        self.SVM_button = customtkinter.CTkButton(
+            self.sidebar_frame,
+            text="SVM",
+            command=app.classificar_imagem_SVM,
+            width=200
+        )
+        self.SVM_button.grid(row=7, column=0, padx=20, pady=10)
+
+        # Botao lateral Classificar Imagem
         self.classificar_imagem_button = customtkinter.CTkButton(
             self.sidebar_frame,
-            text="Classificar Imagem (PT02)",
+            text="Resnet50",
             command=app.sidebar_button_event,
             width=200
         )
-        self.classificar_imagem_button.grid(row=7, column=0, padx=20, pady=10)
+        self.classificar_imagem_button.grid(row=8, column=0, padx=20, pady=10)
         
     
 class ImageHandler:
@@ -229,7 +252,13 @@ class ImageHandler:
         plt.ylabel("Frequência")
         plt.bar(bins[:-1], hist, width=1, color='gray')
         plt.show()
-        
+
+    def show_label(self):
+        self.image_label.grid()
+
+    def hide_label(self):
+        self.image_label.grid_remove()
+           
 class GLCMHandler:
     """
     Computar e exibir GLCM  de uma ROI ou de todas as ROIs. 
@@ -916,7 +945,110 @@ class SFM:
             print(f"CSV gerado com sucesso em: {save_path}")
         else:
             print("Salvamento cancelado pelo usuario.")
-            
+
+
+class SVMClassifier:
+    def __init__(self,app, kernel='linear', C=2.0):
+        self.app = app
+        self.kernel = kernel
+        self.C = C
+        self.data = None
+        self.conf_matrix_total = np.zeros((2, 2))
+        self.accuracies = []
+        self.sensitivities = []
+        self.specificities = []
+        self.f1_scores = []
+        self.unique_patients = None
+
+        
+        self.metrics_label = customtkinter.CTkLabel(
+            app, text="Métricas:\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
+        )
+        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")        
+
+    def load_data(self):
+        # Carregar os dados do CSV
+        file_path = filedialog.askopenfilename(title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
+        if not file_path:
+            raise ValueError("Nenhum arquivo CSV selecionado.")
+        self.data = pd.read_csv(file_path, sep=";", encoding="latin1")
+
+        # Mapear as classes para valores binários
+        self.data['Classe'] = self.data['Classe'].map({'Esteatose Hepática': 1, 'Saudável': 0})
+
+        # Extrair pacientes (assumindo que o ID do paciente esteja no nome da imagem)
+        self.data['Paciente'] = self.data['Imagem'].str.extract(r'ROI_(\d+)', expand=False).astype(int)
+
+        # Salvar pacientes únicos
+        self.unique_patients = self.data['Paciente'].unique()
+
+    @staticmethod
+    def specificity_score(y_true, y_pred):
+        cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+        tn, fp, fn, tp = cm.ravel() if cm.shape == (2, 2) else (0, 0, 0, 0)
+        return tn / (tn + fp) if (tn + fp) > 0 else 0
+
+    def validate(self):
+        X = self.data.drop(columns=['Imagem', 'Classe', 'Paciente'])
+        y = self.data['Classe']
+
+        for patient in self.unique_patients:
+            # Dividir os dados entre treino e teste
+            test_indices = self.data['Paciente'] == patient
+            train_indices = ~test_indices
+
+            X_train, X_test = X[train_indices], X[test_indices]
+            y_train, y_test = y[train_indices], y[test_indices]
+
+            # Treinar o classificador SVM
+            svm = SVC(kernel=self.kernel, C=self.C)
+            svm.fit(X_train, y_train)
+
+            # Fazer previsões
+            y_pred = svm.predict(X_test)
+
+            # Calcular métricas
+            self.accuracies.append(accuracy_score(y_test, y_pred))
+            self.sensitivities.append(recall_score(y_test, y_pred, pos_label=1, zero_division=0))
+            self.specificities.append(self.specificity_score(y_test, y_pred))
+            self.f1_scores.append(f1_score(y_test, y_pred, zero_division=0))
+
+            # Atualizar a matriz de confusão total
+            self.conf_matrix_total += confusion_matrix(y_test, y_pred, labels=[0, 1])
+
+    def calculate_metrics(self):
+        mean_accuracy = np.mean(self.accuracies)
+        mean_sensitivity = np.mean(self.sensitivities)
+        mean_specificity = np.mean(self.specificities)
+        mean_f1_score = np.mean(self.f1_scores)
+
+        self.metrics_label.configure(
+            text=(
+                    f"Métricas:\n"
+                    f"Acurácia Média: {mean_accuracy:.2f}\n"
+                    f"Sensibilidade Média: {mean_sensitivity:.2f}\n"
+                    f"Especificidade Média: {mean_specificity:.2f}\n"
+                    f"F1-Score Médio: {mean_f1_score:.2f}"
+            )
+        )
+
+    def plot_confusion_matrix(self):
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(self.conf_matrix_total.astype(int), annot=True, fmt="d", cmap="Blues",
+                    xticklabels=["Saudável", "Esteatose Hepática"],
+                    yticklabels=["Saudável", "Esteatose Hepática"])
+        plt.title("Matriz de Confusão (Validação Cruzada)")
+        plt.xlabel("Predito")
+        plt.ylabel("Real")
+        plt.show()
+
+
+    def show_metrics(self):
+        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+
+    def hide_metrics(self):
+        self.metrics_label.grid_remove()
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()
