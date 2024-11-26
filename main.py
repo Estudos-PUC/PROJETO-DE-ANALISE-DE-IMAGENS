@@ -17,15 +17,14 @@ from skimage import io
 from tkinter import Tk
 from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, f1_score
 from sklearn.svm import SVC
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.applications.resnet50 import preprocess_input
 import seaborn as sns
-import torch
-import torchvision.models as models
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader, Dataset
 from PIL import Image
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-
+from sklearn.svm import SVC
 SQUARE_SIZE = 28
 
 class App(customtkinter.CTk):
@@ -51,6 +50,7 @@ class App(customtkinter.CTk):
         self.glcm_handler = GLCMHandler(self)
         self.SFM = SFM(self)
         self.SVMClassifier = SVMClassifier(self)
+        self.Resnet50 = Resnet50(self)
 
     def load_image(self):
         self.SVMClassifier.hide_metrics()
@@ -85,6 +85,13 @@ class App(customtkinter.CTk):
         self.SVMClassifier.validate()
         self.SVMClassifier.calculate_metrics()
         self.SVMClassifier.plot_confusion_matrix()
+        self.SVMClassifier.predict_image()
+
+    def classificar_imagem_Resnet50(self):
+        self.image_handler.hide_label()
+        self.Resnet50.load_model()
+        self.Resnet50.classify_single_image()
+
 class AppConfig:
     """
     Criar janela do programa, configurando a barra lateral com os botoes para manipulacao das imgs.
@@ -181,13 +188,13 @@ class AppConfig:
         self.SVM_button.grid(row=7, column=0, padx=20, pady=10)
 
         # Botao lateral Classificar Imagem
-        self.classificar_imagem_button = customtkinter.CTkButton(
+        self.Resnet50_button = customtkinter.CTkButton(
             self.sidebar_frame,
             text="Resnet50",
-            command=app.sidebar_button_event,
+            command=app.classificar_imagem_Resnet50,
             width=200
         )
-        self.classificar_imagem_button.grid(row=8, column=0, padx=20, pady=10)
+        self.Resnet50_button.grid(row=8, column=0, padx=20, pady=10)
         
     
 class ImageHandler:
@@ -288,7 +295,7 @@ class GLCMHandler:
         if roi_path:
             features = self.process_image(roi_path)
             self.display_features(roi_path, features)
-
+        
     def computar_glcm_roi_directory(self):
         dir_path = filedialog.askdirectory(title="Selecione o diretorio com as ROIs")
         if dir_path:
@@ -339,13 +346,14 @@ class GLCMHandler:
                 symmetric=False,
                 normed=True
             )
+            # Entropias
+            features[f'entropy_d{d}'] = -np.sum(glcm * np.log2(glcm + 1e-10))
 
             # Para cada angulo, calcule a homogeneidade.
             homog = graycoprops(glcm, prop='homogeneity')
             features[f'homogeneity_d{d}'] = np.sum(homog)
 
-            # Entropias.
-            features[f'entropy_d{d}'] = -np.sum(glcm * np.log2(glcm + 1e-10))
+
 
         return features
 
@@ -957,6 +965,7 @@ class SVMClassifier:
         self.specificities = []
         self.f1_scores = []
         self.unique_patients = None
+        self.svm = None
 
         
         self.metrics_label = customtkinter.CTkLabel(
@@ -998,12 +1007,13 @@ class SVMClassifier:
             X_train, X_test = X[train_indices], X[test_indices]
             y_train, y_test = y[train_indices], y[test_indices]
 
-            # Treinar o classificador SVM
-            svm = SVC(kernel=self.kernel, C=self.C)
-            svm.fit(X_train, y_train)
+            self.svm = SVC(kernel=self.kernel, C=self.C)
+
+            self.svm.fit(X_train, y_train)
+
 
             # Fazer previsões
-            y_pred = svm.predict(X_test)
+            y_pred = self.svm.predict(X_test)
 
             # Calcular métricas
             self.accuracies.append(accuracy_score(y_test, y_pred))
@@ -1040,12 +1050,108 @@ class SVMClassifier:
         plt.ylabel("Real")
         plt.show()
 
+    def predict_image(self):
+        """Permite que o usuário escolha uma imagem, a processa e realiza a predição."""
+        # Abrir seletor de arquivo
+        file_path = filedialog.askopenfilename(title="Selecione a imagem", 
+                                            filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+        if not file_path:
+            tkinter.messagebox.showinfo("Informação", "Nenhuma imagem selecionada.")
+            return
+
+        try:
+            # Carregar imagem e extrair características SFM
+            f = io.imread(file_path, as_gray=True)
+            features, labels = pyfeats.sfm_features(f, None, 4, 4)
+        except Exception as e:
+            tkinter.messagebox.showerror("Erro", f"Erro ao carregar a imagem ou extrair características: {e}")
+            return
+
+        try:
+            # Processar GLCM
+            glcm = GLCMHandler.process_image(self=app, roi_path=file_path)
+        except Exception as e:
+            tkinter.messagebox.showerror("Erro", f"Erro ao processar GLCM: {e}")
+            return
+
+        # Combinar as características SFM e GLCM
+        all_features = list(features) + list(glcm.values())
+        
+        # Criar o DataFrame no formato esperado pelo modelo
+        columns = ['SFM_Coarseness', 'SFM_Contrast', 'SFM_Periodicity', 'SFM_Roughness',
+                'entropy_d1', 'homogeneity_d1', 'entropy_d2', 'homogeneity_d2',
+                'entropy_d4', 'homogeneity_d4', 'entropy_d8', 'homogeneity_d8']
+        input_data = pd.DataFrame([all_features], columns=columns)
+
+        # Verificar se o modelo foi treinado
+        if self.svm is None:
+            tkinter.messagebox.showwarning("Aviso", "O modelo SVM ainda não foi treinado.")
+            return
+
+        # Fazer a predição com o SVM treinado
+        try:
+            prediction = self.svm.predict(input_data)
+            print(prediction)
+            result = "Esteatose Hepática" if prediction[0] == 1 else "Saudável"
+            tkinter.messagebox.showinfo("Resultado", f"A predição para a imagem é: {result}")
+        except Exception as e:
+            tkinter.messagebox.showerror("Erro", f"Erro ao realizar a predição: {e}")
+
 
     def show_metrics(self):
         self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
     def hide_metrics(self):
         self.metrics_label.grid_remove()
+
+
+class Resnet50:
+    def __init__(self, app):
+        self.app = app
+        self.model = None
+        self.metrics_label = customtkinter.CTkLabel(
+            app, text="Resultados:\nSaudável: N/A\nEsteatose Hepática: N/A\nDiagnóstico: N/A"
+        )
+        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+
+    def preprocess_new_image(self, img_path, img_size=(224, 224)):
+        img = load_img(img_path, target_size=img_size, color_mode="rgb")
+        img_array = img_to_array(img)
+        img_array = preprocess_input(img_array)
+        img_array = np.expand_dims(img_array, axis=0)
+        return img_array
+
+    def load_model(self):
+        file_path = filedialog.askopenfilename(title="Selecione o modelo", filetypes=[("H5 files", "*.h5")])
+        if not file_path:
+            raise ValueError("Nenhum modelo selecionado.")
+        self.model = load_model(file_path)
+
+    def classify_single_image(self):
+        if not self.model:
+            raise ValueError("Modelo não foi carregado. Por favor, carregue o modelo primeiro.")
+
+        # Selecionar a imagem
+        img_path = filedialog.askopenfilename(title="Selecione uma imagem", filetypes=[("PNG files", "*.png")])
+        if not img_path:
+            raise ValueError("Nenhuma imagem selecionada.")
+
+        # Preprocessar a imagem
+        img_array = self.preprocess_new_image(img_path)
+
+        # Fazer predição
+        prediction = self.model.predict(img_array)
+        predicted_class = (prediction > 0.5).astype(int)[0][0]
+
+        # Determinar o diagnóstico
+        diagnostico = 'Saudável' if predicted_class == 0 else 'Esteatose Hepática'
+
+        # Atualizar métricas na interface
+        self.metrics_label.configure(
+            text=(f"Resultados:\n"
+                  f"Imagem: {os.path.basename(img_path)}\n"
+                  f"Diagnóstico: {diagnostico}")
+        )
 
 if __name__ == "__main__":
     app = App()
