@@ -18,6 +18,13 @@ from tkinter import Tk
 from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, f1_score
 from sklearn.svm import SVC
 import seaborn as sns
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, Dataset
+from PIL import Image
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 SQUARE_SIZE = 28
 
@@ -196,7 +203,7 @@ class ImageHandler:
     def __init__(self, app):
         self.img = None
         self.img_resized = None
-        self.zoom_scale = 1.0  # Variavel para controlar o zoom da img
+        self.zoom_scale = 1.0  # Variavel para controlar o zoom da img.
         self.image_label = customtkinter.CTkLabel(app, text="Nenhuma Imagem Carregada")
         self.image_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
@@ -207,31 +214,31 @@ class ImageHandler:
             self.img_resized = self.img.copy()  # Inicialmente, a img redimensionada e a original
             self.display_image()
 
-            # Vincular eventos de rolagem do mouse para o zoom
+            # Vincular eventos de rolagem do mouse para o zoom.
             self.image_label.bind("<MouseWheel>", self.zoom_image)
     
     # Exibir imgs no menu principal.
     def display_image(self):
-        # Redimensionar a img de acordo com zoom
+        # Redimensionar a img de acordo com zoom.
         width, height = self.img.size
         new_size = (int(width * self.zoom_scale), int(height * self.zoom_scale))
         img_resized = self.img.resize(new_size)
 
         img_tk = ImageTk.PhotoImage(img_resized)
         self.image_label.configure(image=img_tk, text="")
-        self.image_label.image = img_tk  # Manter ref da img redimensionada
+        self.image_label.image = img_tk  # Manter ref da img redimensionada.
 
     def zoom_image(self, event):
-        # Ajustar nivel de zoom com base no scroll
+        # Ajustar nivel de zoom com base no scroll.
         if event.delta > 0:
             self.zoom_scale *= 1.1  # zoom + 10%
         elif event.delta < 0:
             self.zoom_scale /= 1.1  # zoom - 10%
 
-        # Limitar zoom para evitar extremos
+        # Limitar zoom para evitar extremos.
         self.zoom_scale = max(0.1, min(self.zoom_scale, 10)) 
 
-        # Atualizar exibicao conforme zoom
+        # Atualizar exibicao conforme zoom.
         self.display_image()
 
     def gerar_histograma(self):
@@ -239,10 +246,9 @@ class ImageHandler:
             tkinter.messagebox.showerror("Erro", "Nenhuma imagem carregada.")
             return
 
-        # Converter img para um array NumPy
         img_array = np.array(self.img)
 
-        # Calcular histograma com 256 bins (intervalos de pixel de 0 a 255)
+        # Calcular histograma com 256 bins (intervalos de pixel de 0 a 255).
         hist, bins = np.histogram(img_array.flatten(), bins=256, range=[0, 256])
 
         # Plotar histograma ->  Matplotlib
@@ -286,13 +292,12 @@ class GLCMHandler:
     def computar_glcm_roi_directory(self):
         dir_path = filedialog.askdirectory(title="Selecione o diretorio com as ROIs")
         if dir_path:
-            # Pegar arquivos de imagens
             image_files = [f for f in os.listdir(dir_path) if f.lower().endswith(
                 ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff'))]
             
-            # Ordena arquivos com números `zero-padded` na ordem natural
+            # Ordena arquivos com números `zero-padded` na ordem natural.
             def natural_sort_key(f):
-                # Extrai os segmentos e os ordena a partir dos números
+                # Extrai os segmentos e os ordena a partir dos números.
                 return [int(num) if num.isdigit() else num for num in re.split(r'(\d+)', f)]
             
             image_files.sort(key=natural_sort_key)
@@ -312,11 +317,11 @@ class GLCMHandler:
             self.save_features_to_csv(all_features)
 
     # Calcular a GLCM de uma img de acordo com os angulos possiveis (de 0 a 360),
-    # e de acordo com as distancias estabelecidas
+    # e de acordo com as distancias estabelecidas.
     def process_image(self, roi_path):
         roi_img = Image.open(roi_path).convert("L")
         roi_array = np.array(roi_img)
-        roi_array = img_as_ubyte(roi_array)  # Imagem esta no formato uint8
+        roi_array = img_as_ubyte(roi_array)  # Imagem no formato uint8.
 
         distances = [1, 2, 4, 8]
         levels = 256
@@ -325,7 +330,7 @@ class GLCMHandler:
 
         for d in distances:
             angles = np.deg2rad(np.arange(0, 360, 1))  
-            # Calula GLCM para todos os angulos possiveis
+            # Calula GLCM para todos os angulos possiveis.
             glcm = graycomatrix(
                 roi_array,
                 distances=[d],
@@ -335,22 +340,22 @@ class GLCMHandler:
                 normed=True
             )
 
-            # Para cada angulo, calcule a homogeneidade
+            # Para cada angulo, calcule a homogeneidade.
             homog = graycoprops(glcm, prop='homogeneity')
             features[f'homogeneity_d{d}'] = np.sum(homog)
 
-            # Entropias
+            # Entropias.
             features[f'entropy_d{d}'] = -np.sum(glcm * np.log2(glcm + 1e-10))
 
         return features
 
     def display_features(self, roi_path, features):
-        # Nova window para mostrar os features
+        # Nova window para mostrar os features.
         feature_window = customtkinter.CTkToplevel(self.app)
         feature_window.title("Descritores de Textura - GLCM")
         feature_window.geometry("600x400")
 
-        # Display do ROI
+        # Display do ROI.
         img_frame = customtkinter.CTkFrame(feature_window)
         img_frame.grid(row=0, column=0, padx=10, pady=10)
 
@@ -364,14 +369,14 @@ class GLCMHandler:
         img_canvas.create_image(0, 0, anchor="nw", image=roi_photo)
         img_canvas.image = roi_photo  # Ref
 
-        # Display das features
+        # Display das features.
         feature_frame = customtkinter.CTkFrame(feature_window)
         feature_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         feature_label = customtkinter.CTkLabel(feature_frame, text="Valores Calculados", font=("Arial", 16))
         feature_label.pack(pady=(0, 10))
 
-        # Listbox para display das features
+        # Listbox para display das features.
         listbox = tkinter.Listbox(feature_frame, font=("Arial", 12))
         listbox.pack(fill="both", expand=True)
 
@@ -389,7 +394,7 @@ class GLCMHandler:
         table_frame = customtkinter.CTkFrame(feature_window)
         table_frame.pack(fill="both", expand=True)
 
-        # Ordem de coluna correta
+        # Ordem de coluna correta.
         columns = [
             'Imagem', 'entropy_d1', 'homogeneity_d1',
             'entropy_d2', 'homogeneity_d2',
@@ -397,29 +402,28 @@ class GLCMHandler:
             'entropy_d8', 'homogeneity_d8'
         ]
 
-        # Treeview para mostrar dados em formato tabular
+        # Treeview para mostrar dados em formato tabular.
         tree = ttk.Treeview(table_frame, columns=columns, show='headings')
         tree.pack(fill="both", expand=True)
 
-        # Cabecalho
+        # Cabecalho.
         for col in columns:
             tree.heading(col, text=col)
 
-        # Dados
+        # Dados.
         for features in all_features:
             row = [features.get(col, '') for col in columns]
             tree.insert('', tkinter.END, values=row)
 
-        # Scrollbar
+        # Scrollbar.
         scrollbar = tkinter.Scrollbar(tree, orient='vertical', command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side='right', fill='y')
 
     def save_features_to_csv(self, all_features):
-        # Converte para DataFrame
         df = pd.DataFrame(all_features)
 
-        # Ordem correta de colunas
+        # Ordem correta de colunas.
         columns = [
             'Imagem', 'entropy_d1', 'homogeneity_d1',
             'entropy_d2', 'homogeneity_d2',
@@ -427,10 +431,10 @@ class GLCMHandler:
             'entropy_d8', 'homogeneity_d8'
         ]
 
-        # Reordena colunas para o esperado
+        # Reordena colunas para o esperado.
         df = df.reindex(columns=columns, fill_value='')
 
-        # Caso o usuario queira salvar em CSV
+        # Opcao de salvar em CSV.
         csv_path = filedialog.asksaveasfilename(
             title="Salvar arquivo CSV",
             defaultextension=".csv",
@@ -470,21 +474,21 @@ class ROIHandler:
         self.save_button = None
 
     def recortar_roi(self):
-        # Abrir nova janela para selecao de paciente e exibicao de img
+        # Abrir nova janela para selecao de paciente e exibicao de img.
         self.recorte_window = customtkinter.CTkToplevel()
         self.recorte_window.title("Selecionar Paciente e Recortar ROI")
         self.recorte_window.geometry("1000x600")
         
-        # layout da janela 
+        # Layout da janela.
         self.recorte_window.grid_columnconfigure(0, weight=1)
         self.recorte_window.grid_columnconfigure(1, weight=4)
         self.recorte_window.grid_rowconfigure(0, weight=1)
 
-        # Criar lista de pacientes
+        # Lista de pacientes.
         self.patient_listbox = tkinter.Listbox(self.recorte_window, font=("Arial", 14))
         self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # Criar canvas para exibir img
+        # Canvas para exibir img.
         self.canvas_frame = customtkinter.CTkFrame(self.recorte_window)
         self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
@@ -498,7 +502,7 @@ class ROIHandler:
             data_array = mat_data['data']
             images = data_array['images']
 
-            # Criar lista para armazenar todas imgs e indices
+            # Lista para armazenar todas imgs e indices.
             self.image_list = []
             for patient_idx in range(images.shape[1]):
                 patient_images = images[0, patient_idx]
@@ -507,17 +511,16 @@ class ROIHandler:
                     self.image_list.append((img, patient_idx, img_idx))
                     self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
 
-        # Vincular selecao da lista -> exibicao da img
+        # Vincular selecao da lista -> exibicao da img.
         self.patient_listbox.bind('<<ListboxSelect>>', self.on_select)
 
     def on_select(self, event):
-        # Carregar a img selecionada
+        # Carregar img selecionada.
         selection = self.patient_listbox.curselection()
         if selection:
             index = selection[0]
             image_data = self.image_list[index][0]
 
-            # Verificar se image_data e array NumPy
             if not isinstance(image_data, np.ndarray):
                 tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
                 return
@@ -526,63 +529,63 @@ class ROIHandler:
 
             self.tk_img = ImageTk.PhotoImage(self.img)
 
-            # Exibir img no canvas
+            # Exibir img no canvas.
             self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
 
-            # Vincular clique para desenhar ROI
+            # Vincular clique para desenhar ROI.
             self.canvas.bind("<Button-1>", self.on_click)
 
-            # Salvar indice do paciente e da img selecionados
+            # Salvar indice do paciente e da img selecionados.
             self.selected_patient_idx = self.image_list[index][1]
             self.selected_img_idx = self.image_list[index][2]
 
     def on_click(self, event):
-        # Limpar retangulo anterior
+        # Limpar retangulo anterior.
         if hasattr(self, 'rect') and self.rect:
             self.canvas.delete(self.rect)
 
-        # Coordenadas do retangulo na img
+        # Coordenadas do retangulo na img.
         x1 = event.x - SQUARE_SIZE // 2
         y1 = event.y - SQUARE_SIZE // 2
         x2 = event.x + SQUARE_SIZE // 2
         y2 = event.y + SQUARE_SIZE // 2
 
-        # Desenhar retangulo na img
+        # Desenhar retangulo na img.
         self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green', width=3)
 
-        # Salvar as coordenadas do clique
+        # Salvar as coordenadas do clique.
         self.click_x = event.x
         self.click_y = event.y
 
-        # Se nao existir, add botao para salvar recorte, s
+        # Se nao existir, add botao para salvar recorte.
         if not self.save_button:
             self.save_button = customtkinter.CTkButton(self.recorte_window, text="Salvar Recorte", command=self.save_crop)
             self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
-            # Add binding da tecla Enter para salvar recorte
+            # Binding em Enter para salvar recorte.
             self.recorte_window.bind('<Return>', lambda event: self.save_crop())
     
     def save_crop(self):
 
-        # Coordenadas do retangulo na img original
+        # Coordenadas do retangulo na img original.
         x1 = self.click_x - (SQUARE_SIZE // 2)
         y1 = self.click_y - (SQUARE_SIZE // 2)
         x2 = self.click_x + (SQUARE_SIZE // 2)
         y2 = self.click_y + (SQUARE_SIZE // 2)
 
-        # Garantir que coordenadas estao dentro dos limites da img
+        # Garantir que coordenadas estao dentro dos limites da img.
         x1 = max(0, x1)
         y1 = max(0, y1)
         x2 = min(self.img.width, x2)
         y2 = min(self.img.height, y2)
 
-        # Recortar img
+        # Recortar img.
         crop_box = (x1, y1, x2, y2)
         cropped_img = self.img.crop(crop_box)
 
-        # Criar nome de arquivo padrao -> ROI_nn_mm
+        # Criar nome de arquivo padrao -> ROI_nn_mm.
         filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}"
 
-        # Abrir dialogo de "Salvar Como" com nome de arquivo padrao
+        # Abrir dialogo de "Salvar Como" com nome de arquivo padrao.
         save_path = filedialog.asksaveasfilename(
             defaultextension=".png",
             initialfile=filename,
@@ -590,10 +593,9 @@ class ROIHandler:
         )
 
         if save_path:
-            # Salvar img recortada
             cropped_img.save(save_path)
 
-            # Salvar coordenadas ROI em um arquivo de texto compartilhado
+            # Salvar coordenadas ROI em um arquivo de texto compartilhado.
             coord_save_path = "ROI_coordinates.txt"
             with open(coord_save_path, 'a') as f:
                 f.write(f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
@@ -601,20 +603,20 @@ class ROIHandler:
             tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}\nCoordenadas salvas em {coord_save_path}")
 
     def calcular_hi_e_ajustar_figado(self):
-        # Diretorios das ROIs
+        # Diretorios das ROIs.
         figado_dir = "./figado"
         rim_dir = "./rim"
         output_dir = "./Figado_Ajustado"
         os.makedirs(output_dir, exist_ok=True)
 
-        # Arquivo para salvar valores de HI
+        # Arquivo para salvar valores de HI.
         hi_save_path = "HI_values.txt"
 
-        # Iterar sobre todas ROIs do figado
+        # Iterar sobre todas ROIs do figado.
         with open(hi_save_path, 'w') as hi_file:
             for filename in os.listdir(figado_dir):
                 if filename.endswith(".png") and "RIM" not in filename:
-                    # Carregar ROI do figado e do rim correspondente
+                    # Carregar ROI do figado e do rim correspondente.
                     figado_path = os.path.join(figado_dir, filename)
                     rim_path = os.path.join(rim_dir, filename.replace('.png', '_RIM.png'))
 
@@ -624,25 +626,23 @@ class ROIHandler:
                     figado_img = Image.open(figado_path).convert("L")
                     rim_img = Image.open(rim_path).convert("L")
 
-                    # Converter imgs para arrays NumPy
                     figado_array = np.array(figado_img)
                     rim_array = np.array(rim_img)
 
-                    # Calcular a media dos tons de cinza
                     media_figado = np.mean(figado_array)
                     media_rim = np.mean(rim_array)
 
-                    # Calcular o HI e salvar no arquivo
+                    # Calcular o HI e salvar no arquivo.
                     hi = media_figado / media_rim if media_rim != 0 else 1
                     hi_file.write(f"{filename.replace('.png', '')}, {hi}\n")
 
-                    # Ajustar tons de cinza da ROI do figado
+                    # Ajustar tons de cinza da ROI do figado.
                     ajustado_figado_array = np.clip(np.round(figado_array * hi), 0, 255).astype(np.uint8)
 
-                    # Criar img ajustada do figado
+                    # Criar img ajustada do figado.
                     ajustado_figado_img = Image.fromarray(ajustado_figado_array)
 
-                    # Salvar ROI ajustada do figado
+                    # Salvar ROI ajustada do figado.
                     ajustado_figado_path = os.path.join(output_dir, filename)
                     ajustado_figado_img.save(ajustado_figado_path)
 
@@ -650,35 +650,35 @@ class ROIHandler:
 
 
     def calcular_hi_imagem(self):
-        # Abrir nova janela para selecao de paciente e exibicao de img
+        # Abrir nova janela para selecao de paciente e exibicao de img.
         self.hi_window = customtkinter.CTkToplevel()
         self.hi_window.title("Selecionar Paciente e Calcular HI")
         self.hi_window.geometry("1000x600")
         
-        # Configurar layout da nova janela
+        # Configurar layout da nova janela.
         self.hi_window.grid_columnconfigure(0, weight=1)
         self.hi_window.grid_columnconfigure(1, weight=4)
         self.hi_window.grid_rowconfigure(0, weight=1)
 
-        # Criar lista de pacientes 
+        # Lista de pacientes.
         self.patient_listbox = tkinter.Listbox(self.hi_window, font=("Arial", 14))
         self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # Criar canvas para exibir img 
+        # Canvas para exibir img.
         self.canvas_frame = customtkinter.CTkFrame(self.hi_window)
         self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
-        # Carregar dados .mat e preencher lista de pacientes
+        # Carregar dados .mat e preencher lista de pacientes.
         file_path = filedialog.askopenfilename(filetypes=[("MAT files", "*.mat")])
         if file_path:
             mat_data = scipy.io.loadmat(file_path)
             data_array = mat_data['data']
             images = data_array['images']
 
-            # Criar uma lista para armazenar todas as imgs e seus indices
+            # Lista para armazenar todas as imgs e seus indices.
             self.image_list = []
             for patient_idx in range(images.shape[1]):
                 patient_images = images[0, patient_idx]
@@ -687,17 +687,17 @@ class ROIHandler:
                     self.image_list.append((img, patient_idx, img_idx))
                     self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
 
-        # Vincular selecao da lista a exibicao da img
+        # Vincular selecao da lista a exibicao da img.
         self.patient_listbox.bind('<<ListboxSelect>>', self.on_select_hi)
 
     def on_select_hi(self, event):
-        # Carregar a img selecionada
+        # Carregar a img selecionada.
         selection = self.patient_listbox.curselection()
         if selection:
             index = selection[0]
             image_data = self.image_list[index][0]
 
-            # Verificar se image_data e um array NumPy
+            # Verificar se image_data e um array NumPy.
             if not isinstance(image_data, np.ndarray):
                 tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
                 return
@@ -706,26 +706,25 @@ class ROIHandler:
 
             self.tk_img = ImageTk.PhotoImage(self.img)
 
-            # Limpar qualquer conteudo anterior do canvas
+            # Limpar qualquer conteudo anterior do canvas.
             self.canvas.delete("all")
 
-            # Exibir img no canvas
+            # Exibir img no canvas.
             self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
 
-            # Vincular clique para selecionar pontos
+            # Bind clique para selecionar pontos.
             self.canvas.bind("<Button-1>", self.on_click_hi)
 
-            # Salvar indice do paciente e da img selecionados
+            # Salvar indice do paciente e da img selecionados.
             self.selected_patient_idx = self.image_list[index][1]
             self.selected_img_idx = self.image_list[index][2]
 
-            # Inicializar variaveis para selecao de pontos
             self.points = []
             self.rects = []
 
     def on_click_hi(self, event):
         if len(self.rects) == 2: return 
-        # Desenhar retangulo no ponto clicado
+        # Desenhar retangulo no ponto clicado.
         x1 = event.x - SQUARE_SIZE // 2
         y1 = event.y - SQUARE_SIZE // 2
         x2 = event.x + SQUARE_SIZE // 2
@@ -735,27 +734,26 @@ class ROIHandler:
         if not len(self.rects) == 2:
             rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='red', width=2)
             self.rects.append(rect)
-            # Salvar coordenadas do clique
+            # Salvar coordenadas do clique.
             self.points.append((event.x, event.y))
 
 
         if len(self.points) == 2:
-            # Apos dois pontos selecionados calcular o HI
+            # Apos dois pontos selecionados calcular o HI.
             self.calculate_hi_from_points()
-            # Resetar os pontos e retangulos para permitir novas selecoes
+            # Resetar os pontos e retangulos para permitir novas selecoes.
 
     def calculate_hi_from_points(self):
-        # Obter coordenadas dos dois pontos
         (x1, y1) = self.points[0]
         (x2, y2) = self.points[1]
 
-        # Coordenadas na img original
+        # Coordenadas na img original.
         x1_original = x1
         y1_original = y1
         x2_original = x2
         y2_original = y2
 
-        # Definir caixas ao redor dos pontos
+        # Definir caixas ao redor dos pontos.
         box1 = (
             x1_original - SQUARE_SIZE // 2,
             y1_original - SQUARE_SIZE // 2,
@@ -769,7 +767,7 @@ class ROIHandler:
             y2_original + SQUARE_SIZE // 2
         )
 
-        # Garantir que coordenadas estejam dentro dos limites da img
+        # Garantir que coordenadas estejam dentro dos limites da img.
         box1 = (
             max(0, box1[0]),
             max(0, box1[1]),
@@ -783,54 +781,54 @@ class ROIHandler:
             min(self.img.height, box2[3])
         )
 
-        # Recortar regioes
+        # Recortar regioes.
         region1 = self.img.crop(box1)
         region2 = self.img.crop(box2)
 
-        # Converter regioes para arrays NumPy
+        # Converter regioes para arrays NumPy.
         array1 = np.array(region1)
         array2 = np.array(region2)
 
-        # Calcular medias das regioes
+        # Calcular medias das regioes.
         media1 = np.mean(array1)
         media2 = np.mean(array2)
 
-        # Calcular HI (media2 -> rim)
+        # Calcular HI (media2 -> rim).
         hi = media1 / media2 if media2 != 0 else 1
 
-        # Exibir valor de HI ao user
+        # Exibir valor de HI ao user.
         tkinter.messagebox.showinfo("HI Calculado", f"O valor do HI e: {hi:.4f}")
 
-        # Ajustar tons de cinza da ROI do figado
+        # Ajustar tons de cinza da ROI do figado.
         ajustado_array = np.clip(np.round(array1 * hi), 0, 255).astype(np.uint8)
 
-        # Criar img ajustada do figado
+        # img ajustada do figado.
         ajustado_region1 = Image.fromarray(ajustado_array)
 
-        # Diretorios para salvar as ROIs
+        # Diretorios para salvar as ROIs.
         figado_dir = "./figadoTeste"
         figado_ajustado_dir = "./Figado_AjustadoTeste"
         os.makedirs(figado_dir, exist_ok=True)
         os.makedirs(figado_ajustado_dir, exist_ok=True)
 
-        # Criar nomes de arquivo
+        # Criar nomes de arquivo.
         filename_liver_roi = f"ROI_FIGADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
         filename_liver_roi_ajustado = f"ROI_FIGADO_AJUSTADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
 
-        # Caminhos completos
+        # Caminhos completos.
         save_path_liver = os.path.join(figado_dir, filename_liver_roi)
         save_path_liver_ajustado = os.path.join(figado_ajustado_dir, filename_liver_roi_ajustado)
 
-        # Salvar imgs e informar user
+        # Salvar imgs e informar user.
         region1.save(save_path_liver)
         ajustado_region1.save(save_path_liver_ajustado)
         tkinter.messagebox.showinfo("Salvo", f"ROI do figado original salva em {save_path_liver}\nROI do figado ajustada salva em {save_path_liver_ajustado}")
 
-        # Apagar retangulos desenhados no canvas
+        # Apagar retangulos desenhados no canvas.
         for rect in self.rects:
             self.canvas.delete(rect)
 
-        # Resetar listas de pontos e retangulos
+        # Resetar listas de pontos e retangulos.
         self.points = []
         self.rects = []
 
@@ -904,32 +902,32 @@ class SFM:
         img_label.pack(expand=True)
 
     def calcular_para_pasta(self):
-        # Abre uma janela para o usuario selecionar o diretorio com as imagens
+        # Abre uma janela para o usuario selecionar o diretorio com as imagens.
         root = Tk()
         root.withdraw()  # Esconde a janela principal do Tkinter
         directory = filedialog.askdirectory(title="Selecione a pasta com as imagens")
         
-        # Se o usuario cancelar a selecao da pasta, interrompe a execucao
+        # Se o usuario cancelar a selecao da pasta, interrompe a execucao.
         if not directory:
             print("Selecao de pasta cancelada pelo usuario.")
             return
         
-        data = []  # Lista para armazenar resultados
+        data = []
         
-        # Loop em todos os arquivos no diretorio e calcula o SFM para a pasta
+        # Loop em todos os arquivos no diretorio e calcula o SFM para a pasta.
         for filename in os.listdir(directory):
-            if filename.endswith(".png") or filename.endswith(".jpg"):  # Filtra para arquivos de img
+            if filename.endswith(".png") or filename.endswith(".jpg"): 
                 filepath = os.path.join(directory, filename)
                 
-                # Carrega a img e considera a img inteira como ROI
+                # Carrega a img e considera a img inteira como ROI.
                 f = io.imread(filepath, as_gray=True)
                 features, labels = pyfeats.sfm_features(f, None, self.Lr, self.Lc)
                 
-                # Adiciona os resultados à lista de dados
+                # Adiciona os resultados à lista de dados.
                 row = [filename] + features.tolist()
                 data.append(row)
 
-        # Cria um DataFrame com os resultados utilizando pandas
+        # Cria um DataFrame com os resultados utilizando pandas.
         columns = ['Filename'] + labels
         df = pd.DataFrame(data, columns=columns)
         
@@ -939,7 +937,7 @@ class SFM:
             filetypes=[("CSV files", "*.csv")]
         )
         
-        # Salva o DataFrame no arquivo CSV se o usuario escolher um caminho adequado
+        # Salva o DataFrame no arquivo CSV se o usuario escolher um caminho adequado.
         if save_path:
             df.to_csv(save_path, index=False)
             print(f"CSV gerado com sucesso em: {save_path}")
