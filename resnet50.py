@@ -1,3 +1,9 @@
+# Copyright(c) Eduardo, Fernanda, Pedro - 2024
+
+#=========================================
+# Imports.
+#=========================================
+
 import os
 import sys
 import numpy as np
@@ -17,7 +23,10 @@ from tensorflow.keras.regularizers import l2
 from sklearn.utils.class_weight import compute_class_weight
 import math
 
-# Diretorio das imgs
+#=========================================
+# Configuração de Diretórios para Resultados.
+#=========================================
+
 confusion_matrix_dir = "Matriz_Confusao_Rodada_ResNext"
 acc_graph_dir = "Grafico_Acuracia_Rodada_ResNext"
 results_dir = "Resultados_Finais_ResNext"
@@ -25,6 +34,10 @@ results_dir = "Resultados_Finais_ResNext"
 os.makedirs(confusion_matrix_dir, exist_ok=True)
 os.makedirs(acc_graph_dir, exist_ok=True)
 os.makedirs(results_dir, exist_ok=True)
+
+#=========================================
+# Funções Auxiliares.
+#=========================================
 
 def preprocess_new_image(img_path, img_size=(224, 224)):
     img = load_img(img_path, target_size=img_size, color_mode="rgb")
@@ -120,7 +133,10 @@ def build_resnet50(input_shape=(224, 224, 3)):
                   metrics=['accuracy'])
     return model
 
-# Configuração principal.
+#=========================================
+# Carregamento de Dados.
+#=========================================
+
 file_path = filedialog.askopenfilename(title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
 if not file_path:
     raise ValueError("Nenhum arquivo CSV selecionado.")
@@ -165,6 +181,10 @@ data['Paciente'] = data['Paciente'].astype(int)
 
 print("Distribuição de classes total:")
 print(data['Classe'].value_counts())
+
+#=========================================
+# Loop de Treinamento por Paciente.
+#=========================================
 
 accuracies = []
 conf_matrices = []
@@ -303,7 +323,7 @@ for patient in unique_patients:
     plt.close()
 
 #=========================================
-# Resultados finais
+# Resultados finais.
 #=========================================
 mean_accuracy = np.mean(accuracies)
 print(f"\nMédia de Acurácia: {mean_accuracy:.4f}")
