@@ -39,15 +39,15 @@ import pyfeats
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# DeepLearning Frameworks
-from tensorflow.keras.models import Model, load_model
-from tensorflow.keras.applications import ResNet50
-from tensorflow.keras.layers import Dense, Dropout, GlobalAveragePooling2D
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
-from tensorflow.keras.applications.resnet50 import preprocess_input
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.regularizers import l2
+
+from tensorflow.keras.models import Model, load_model # type: ignore
+from tensorflow.keras.applications import ResNet50 # type: ignore
+from tensorflow.keras.layers import Dense, Dropout, GlobalAveragePooling2D # type: ignore
+from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator # type: ignore
+from tensorflow.keras.applications.resnet50 import preprocess_input # type: ignore
+from tensorflow.keras.optimizers import Adam # type: ignore
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint # type: ignore
+from tensorflow.keras.regularizers import l2  # type: ignore
 
 # GUI
 import customtkinter
@@ -125,7 +125,6 @@ class App(customtkinter.CTk):
         self.SVMClassifier.plot_confusion_matrix()
         self.SVMClassifier.predict_image()
         self.SVMClassifier.calculate_metrics()
-        self.SVMClassifier.show_metrics()
 
     def classificar_imagem_Resnet50(self):
         self.image_handler.hide_label()
@@ -1162,11 +1161,42 @@ class SVMClassifier:
         self.unique_patients = None
         self.svm = None
 
-        self.metrics_label = customtkinter.CTkLabel(
-            app, text="Resultados:\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
+        self.metrics_frame = None
+
+    def show_metrics(self, accuracy, sensitivity, specificity, f1_score):
+        # Limpar métricas existentes (se houver)
+        if self.metrics_frame is not None:
+            self.metrics_frame.destroy()
+
+        # Frame para organizar os widgets
+        self.metrics_frame = customtkinter.CTkFrame(self.app)
+        self.metrics_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+
+        # Título em negrito
+        title_label = customtkinter.CTkLabel(
+            self.metrics_frame, text="Resultados:", font=("Helvetica", 16, "bold"), anchor="w"
         )
-        self.metrics_label.grid(
-            row=0, column=1, padx=20, pady=20, sticky="nsew")
+        title_label.grid(row=0, column=0, padx=10, pady=(5, 10), sticky="w")
+
+        # Métricas alinhadas à esquerda
+        metrics_text = [
+            f"Acurácia Média: {accuracy:.2f}",
+            f"Sensibilidade Média: {sensitivity:.2f}",
+            f"Especificidade Média: {specificity:.2f}",
+            f"F1-Score Médio: {f1_score:.2f}",
+        ]
+
+        for i, metric in enumerate(metrics_text, start=1):
+            metric_label = customtkinter.CTkLabel(
+                self.metrics_frame, text=metric, font=("Helvetica", 14), anchor="w"
+            )
+            metric_label.grid(row=i, column=0, padx=10, pady=2, sticky="w")
+
+    def hide_metrics(self):
+        # Esconder as métricas destruindo o frame
+        if self.metrics_frame is not None:
+            self.metrics_frame.destroy()
+            self.metrics_frame = None
 
     def load_data(self):
         # Carregar os dados do CSV
@@ -1231,17 +1261,8 @@ class SVMClassifier:
                                                     # F1-Score
                                                     sensitivity) if (precision + sensitivity) > 0 else 0
 
-        # Atualizar o Label ou exibir no terminal
-        self.metrics_label.configure(
-            text=(
-                f"Métricas:\n"
-                f"Acurácia Média: {accuracy:.2f}\n"
-                f"Sensibilidade Média: {sensitivity:.2f}\n"
-                f"Especificidade Média: {specificity:.2f}\n"
-                f"F1-Score Médio: {f1_score:.2f}"
-            )
-        )
-        print(self.metrics_label._text)
+
+        self.show_metrics(accuracy=accuracy,sensitivity=sensitivity,specificity=specificity,f1_score=f1_score)
         self.app.update()
 
     def plot_confusion_matrix(self):
@@ -1312,12 +1333,6 @@ class SVMClassifier:
             tkinter.messagebox.showerror(
                 "Erro", f"Erro ao realizar a predição: {e}")
 
-    def show_metrics(self):
-        self.metrics_label.grid(
-            row=0, column=1, padx=20, pady=20, sticky="nsew")
-
-    def hide_metrics(self):
-        self.metrics_label.grid_remove()
 
 # =========================================
 # Classificador ResNet50.
