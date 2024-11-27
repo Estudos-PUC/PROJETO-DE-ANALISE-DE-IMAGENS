@@ -11,6 +11,8 @@ import sys
 import math
 import time
 from tkinter import Tk, filedialog, messagebox, ttk
+import tkinter
+import scipy
 
 # Manipular dados.
 import pandas as pd
