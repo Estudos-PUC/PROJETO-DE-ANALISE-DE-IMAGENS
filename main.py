@@ -1149,7 +1149,6 @@ class Resnet50:
         self.base_path = filedialog.askdirectory(
             title="Select Folder"
         )
-        self.base_path = r"C:\Users\pedro\Documents\GitHub\PROJETO-DE-ANALISE-DE-IMAGENS\Figado_Ajustado"
 
     def preprocess_new_image(self, img_path, img_size=(224, 224)):
         img = load_img(img_path, target_size=img_size, color_mode="rgb")
@@ -1195,7 +1194,7 @@ class Resnet50:
     # Funções Auxiliares.
     #=========================================
 
-    def load_and_preprocess_images(df, base_path, img_size=(224, 224)):
+    def load_and_preprocess_images(self, df, base_path, img_size=(224, 224)):
         X = []
         y = []
         for _, row in df.iterrows():
@@ -1207,7 +1206,7 @@ class Resnet50:
             y.append(row['Classe'])
         return np.array(X), np.array(y)
 
-    def balance_data_with_augmentation(X, y):
+    def balance_data_with_augmentation(self, X, y):
         X_class0 = X[y == 0]
         y_class0 = y[y == 0]
         X_class1 = X[y == 1]
@@ -1261,7 +1260,7 @@ class Resnet50:
         return X_balanced, y_balanced
 
     # modelo ResNet50 com regularização L2.
-    def build_resnet50(input_shape=(224, 224, 3)):
+    def build_resnet50(self, input_shape=(224, 224, 3)):
         base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
         # Congelar todas as camadas do modelo base.
         for layer in base_model.layers:
@@ -1364,6 +1363,8 @@ class Resnet50:
             train_data = data[data['Paciente'] != patient]
 
             X_train, y_train = self.load_and_preprocess_images(train_data, self.base_path)
+
+            
             X_test, y_test = self.load_and_preprocess_images(test_data, self.base_path)
 
             print("Distribuição de classes no treinamento antes do balanceamento:")
