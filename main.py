@@ -681,6 +681,18 @@ class ROIHandler:
         self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
+        # Canvas para exibir img.
+        self.histograma_frame = customtkinter.CTkFrame(self.hi_window)
+        self.histograma_frame.grid(
+            row=0, column=2, sticky="nsew", padx=10, pady=10)
+
+
+        self.button1 = customtkinter.CTkButton(
+            self.histograma_frame, text="Exibir histograma", command=self.gerar_histograma
+        )
+        self.button1.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=10)
+        
         # Carregar dados .mat e preencher lista de pacientes.
         file_path = filedialog.askopenfilename(
             filetypes=[("MAT files", "*.mat")])
@@ -701,6 +713,25 @@ class ROIHandler:
 
         # Vincular selecao da lista a exibicao da img.
         self.patient_listbox.bind('<<ListboxSelect>>', self.on_select_hi)
+
+    def gerar_histograma(self):
+        if self.img is None:
+            tkinter.messagebox.showerror("Erro", "Nenhuma imagem carregada.")
+            return
+
+        img_array = np.array(self.img)
+
+        # Calcular histograma com 256 bins (intervalos de pixel de 0 a 255).
+        hist, bins = np.histogram(
+            img_array.flatten(), bins=256, range=[0, 256])
+
+        # Plotar histograma ->  Matplotlib
+        plt.figure()
+        plt.title("Histograma")
+        plt.xlabel("Valor do Pixel")
+        plt.ylabel("Frequência")
+        plt.bar(bins[:-1], hist, width=1, color='gray')
+        plt.show()
 
     def on_select_hi(self, event):
         # Carregar a img selecionada.
