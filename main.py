@@ -1521,13 +1521,7 @@ class Resnet50:
 
         # Determinar o diagnóstico
         diagnostico = 'Saudável' if predicted_class == 0 else 'Esteatose Hepática'
-
-        # Atualizar métricas na interface
-        self.metrics_label.configure(
-            text=(f"Resultados:\n"
-                  f"Imagem: {os.path.basename(img_path)}\n"
-                  f"Diagnóstico: {diagnostico}")
-        )
+        print(diagnostico)
 
     # Funções Auxiliares.
 
