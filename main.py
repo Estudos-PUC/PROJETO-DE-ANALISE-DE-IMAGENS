@@ -604,6 +604,8 @@ class ROIHandler:
         self.button_frame.grid(row=1, column=0, pady=20, sticky="n")
 
     def hide_button_frame(self):
+        self.main_frame.grid_remove()
+        self.title_label.grid_remove()
         self.button_frame.grid_remove()
 
     def calcular_hi_e_ajustar_figado(self):
@@ -840,8 +842,8 @@ class ROIHandler:
 
         # Criar nomes de arquivo.
         if self.selected_patient_idx is None or self.selected_img_idx is None:
-            filename_liver_roi = "teste.png"
-            filename_liver_roi_ajustado = "teste_ajustado.png"
+            filename_liver_roi = f"hi{hi:.2f}.png"
+            filename_liver_roi_ajustado = f"hi{hi:.2f}_ajustado.png"
         else:
             filename_liver_roi = f"ROI_FIGADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
             filename_liver_roi_ajustado = f"ROI_FIGADO_AJUSTADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
