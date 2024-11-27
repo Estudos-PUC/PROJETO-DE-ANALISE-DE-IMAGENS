@@ -570,28 +570,28 @@ class ROIHandler:
         )
 
         self.button1 = customtkinter.CTkButton(
-            self.button_frame, text="Carregar Imagem", command=self.acao1
+            self.button_frame, text="Carregar Imagem", command=self.handler_hi_jpg
         )
         self.button2 = customtkinter.CTkButton(
-            self.button_frame, text="Carregar arquivo .mat", command=self.acao2
+            self.button_frame, text="Carregar arquivo .mat", command=self.handler_hi_mat
         )
 
         self.button1 = customtkinter.CTkButton(
-            self.button_frame, text="Carregar Imagem", command=self.acao1
+            self.button_frame, text="Carregar Imagem", command=self.handler_hi_jpg
         )
         self.button2 = customtkinter.CTkButton(
-            self.button_frame, text="Carregar arquivo .mat", command=self.acao2
+            self.button_frame, text="Carregar arquivo .mat", command=self.handler_hi_mat
         )
 
-        # Posicionar os botões lado a lado
+        # Posicionar os botoes lado a lado.
         self.button1.grid(row=0, column=0, padx=10, pady=10)
         self.button2.grid(row=0, column=1, padx=10, pady=10)
 
-    def acao1(self):
+    def handler_hi_jpg(self):
         zoom_scale = 1
         self.calcular_hi_jpg()
 
-    def acao2(self):
+    def handler_hi_mat(self):
         zoom_scale = 1
         self.recortar_roi_calcular_hi_imagem()
 
@@ -655,8 +655,7 @@ class ROIHandler:
                     ajustado_figado_path = os.path.join(output_dir, filename)
                     ajustado_figado_img.save(ajustado_figado_path)
 
-        tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {
-                                    output_dir}\n valores do HI salvos em {hi_save_path}")
+        tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {output_dir}\n valores do HI salvos em {hi_save_path}")
 
     def recortar_roi_calcular_hi_imagem(self):
         # Abrir nova janela para selecao de paciente e exibicao de img.
@@ -747,7 +746,7 @@ class ROIHandler:
             self.rects = []
 
     def on_click_hi(self, event):
-        # Verificar se o clique está dentro da imagem exibida no Canvas
+        # Verificar se o clique esta dentro da imagem exibida no Canvas.
         img_width = self.original_image.width * self.zoom_scale
         img_height = self.original_image.height * self.zoom_scale
 
@@ -759,18 +758,18 @@ class ROIHandler:
         if len(self.rects) == 2:
             return
 
-        # Coordenadas relativas ao Canvas (onde o clique ocorreu)
+        # Coordenadas relativas ao Canvas (onde o clique ocorreu).
         canvas_x = event.x
         canvas_y = event.y
 
-        # Coordenadas relativas à imagem original
+        # Coordenadas relativas a img original.
         img_x = (canvas_x - self.image_x) / self.zoom_scale
         img_y = (canvas_y - self.image_y) / self.zoom_scale
 
-        # Armazenar as coordenadas relativas à imagem original
+        # Armazenar coordenadas da img original.
         self.points.append((img_x, img_y))
 
-        # Desenhar o retângulo no Canvas
+        # Desenhar o retangulo no Canvas.
         x1 = self.image_x + img_x * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
         y1 = self.image_y + img_y * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
         x2 = self.image_x + img_x * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
@@ -1012,12 +1011,9 @@ class ROIHandler:
             y2 = self.image_y + y * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
             self.canvas.coords(rect, x1, y1, x2, y2)
 
-
-
 # =========================================
 # Cálculo do SFM.
 # =========================================
-
 
 class SFM:
     """
@@ -1027,7 +1023,7 @@ class SFM:
     features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
 
     f: imagem selecionada
-    mask: por padrao none porque a imagem selecionada ja e uma roi
+    mask: por padrao `none` porque a imagem selecionada ja e uma roi
 
     valores retirados da documentacao da biblioteca
     self.Lr
@@ -1038,7 +1034,11 @@ class SFM:
         calcular_para_imagem
         calcular_para_pasta
     """
-
+    #
+    # @params:
+    #   - Lr: Numero de linhas.
+    #   - Lc: Numero de colunas.
+    #
     def __init__(self, app, Lr=4, Lc=4):
         self.app = app
         self.Lr = Lr
@@ -1054,13 +1054,17 @@ class SFM:
             print("Selecao de arquivo cancelada pelo usuario.")
             return
 
+        # Leitura da imagem.
         f = io.imread(filepath, as_gray=True)
+        #Extrair caracteristicas SFM.
         features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
 
+        # Janela de Resultados.
         feature_window = customtkinter.CTkToplevel(self.app)
         feature_window.title("Resultados das Caracteristicas SFM")
         feature_window.geometry("1000x700")
 
+        # Tabela de features.
         table_frame = customtkinter.CTkFrame(feature_window)
         table_frame.pack(fill="both", expand=True,
                          side="left", padx=10, pady=10)
@@ -1083,9 +1087,9 @@ class SFM:
                        expand=True, padx=10, pady=10)
 
         pil_img = Image.open(filepath)
-        # Redimensiona a img para 500x500
+        # Redimensiona a img para 500x500.
         pil_img = pil_img.resize((500, 500), Image.LANCZOS)
-        # Armazena a img como atributo da instancia
+        # Armazena a img como atributo da instancia.
         self.tk_img = ImageTk.PhotoImage(pil_img)
 
         img_label = customtkinter.CTkLabel(
@@ -1141,8 +1145,14 @@ class SFM:
 # Classificador SVM.
 # =========================================
 
-
 class SVMClassifier:
+    """
+    Pipeline completo de classificacao com SVM. Inclui:
+    - Carregamento de dados e conversão de classes para binário.
+    - Validação cruzada por paciente com cálculo de métricas (Acurácia, Sensibilidade, etc.).
+    - Extração de características SFM e GLCM.
+    - Predição e visualização de resultados na interface gráfica.
+    """
     def __init__(self, app, kernel='linear', C=2.0):
         self.app = app
         self.kernel = kernel
@@ -1313,8 +1323,10 @@ class SVMClassifier:
 # Classificador ResNet50.
 # =========================================
 
-
 class Resnet50:
+    """
+    
+    """
     def __init__(self, app):
         self.app = app
         self.model = None
@@ -1360,7 +1372,6 @@ class Resnet50:
         predicted_class = (prediction > 0.5).astype(int)[0][0]
 
         # Determinar o diagnóstico
-        
         try:
             img_array = self.preprocess_new_image(img_path)
             prediction = self.model.predict(img_array)
