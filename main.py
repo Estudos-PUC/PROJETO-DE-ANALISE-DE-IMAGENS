@@ -1153,7 +1153,7 @@ class SVMClassifier:
         self.svm = None
 
         self.metrics_label = customtkinter.CTkLabel(
-            app, text=":\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
+            app, text="Resultados:\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
         )
         self.metrics_label.grid(
             row=0, column=1, padx=20, pady=20, sticky="nsew")
