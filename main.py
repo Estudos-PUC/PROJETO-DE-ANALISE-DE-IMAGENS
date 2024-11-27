@@ -113,12 +113,12 @@ class App(customtkinter.CTk):
     
     def classificar_imagem_SVM(self):
         self.image_handler.hide_label()
-        self.SVMClassifier.show_metrics()
         self.SVMClassifier.load_data()
         self.SVMClassifier.validate()
-        self.SVMClassifier.calculate_metrics()
         self.SVMClassifier.plot_confusion_matrix()
-        self.SVMClassifier.predict_image()
+        # self.SVMClassifier.predict_image()
+        self.SVMClassifier.calculate_metrics()
+        self.SVMClassifier.show_metrics()
 
     def classificar_imagem_Resnet50(self):
         self.image_handler.hide_label()
@@ -1024,16 +1024,12 @@ class SVMClassifier:
         self.C = C
         self.data = None
         self.conf_matrix_total = np.zeros((2, 2))
-        self.accuracies = []
-        self.sensitivities = []
-        self.specificities = []
-        self.f1_scores = []
         self.unique_patients = None
         self.svm = None
 
         
         self.metrics_label = customtkinter.CTkLabel(
-            app, text="Métricas:\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
+            app, text=":\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
         )
         self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")        
 
@@ -1071,38 +1067,39 @@ class SVMClassifier:
             X_train, X_test = X[train_indices], X[test_indices]
             y_train, y_test = y[train_indices], y[test_indices]
 
-            self.svm = SVC(kernel=self.kernel, C=self.C)
+            self.svm = SVC(kernel=self.kernel, C=self.C, class_weight='balanced')
 
             self.svm.fit(X_train, y_train)
 
-
             # Fazer previsões
             y_pred = self.svm.predict(X_test)
-
-            # Calcular métricas
-            self.accuracies.append(accuracy_score(y_test, y_pred))
-            self.sensitivities.append(recall_score(y_test, y_pred, pos_label=1, zero_division=0))
-            self.specificities.append(self.specificity_score(y_test, y_pred))
-            self.f1_scores.append(f1_score(y_test, y_pred, zero_division=0))
 
             # Atualizar a matriz de confusão total
             self.conf_matrix_total += confusion_matrix(y_test, y_pred, labels=[0, 1])
 
     def calculate_metrics(self):
-        mean_accuracy = np.mean(self.accuracies)
-        mean_sensitivity = np.mean(self.sensitivities)
-        mean_specificity = np.mean(self.specificities)
-        mean_f1_score = np.mean(self.f1_scores)
+        # Extrair valores da matriz de confusão total
+        tn, fp, fn, tp = self.conf_matrix_total.ravel()
 
+        # Cálculo das métricas
+        accuracy = (tp + tn) / (tp + tn + fp + fn)  # Acurácia
+        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0  # Sensibilidade (Recall)
+        specificity = tn / (tn + fp) if (tn + fp) > 0 else 0  # Especificidade
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0  # Precisão
+        f1_score = 2 * (precision * sensitivity) / (precision + sensitivity) if (precision + sensitivity) > 0 else 0  # F1-Score
+
+        # Atualizar o Label ou exibir no terminal
         self.metrics_label.configure(
             text=(
-                    f"Métricas:\n"
-                    f"Acurácia Média: {mean_accuracy:.2f}\n"
-                    f"Sensibilidade Média: {mean_sensitivity:.2f}\n"
-                    f"Especificidade Média: {mean_specificity:.2f}\n"
-                    f"F1-Score Médio: {mean_f1_score:.2f}"
+                f"Métricas:\n"
+                f"Acurácia Média: {accuracy:.2f}\n"
+                f"Sensibilidade Média: {sensitivity:.2f}\n"
+                f"Especificidade Média: {specificity:.2f}\n"
+                f"F1-Score Médio: {f1_score:.2f}"
             )
         )
+        print(self.metrics_label._text)
+        self.app.update()
 
     def plot_confusion_matrix(self):
         plt.figure(figsize=(8, 6))
@@ -1176,10 +1173,6 @@ class Resnet50:
     def __init__(self, app):
         self.app = app
         self.model = None
-        self.metrics_label = customtkinter.CTkLabel(
-            app, text="Resultados:\nSaudável: N/A\nEsteatose Hepática: N/A\nDiagnóstico: N/A"
-        )
-        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
         # Caminho base das ROIs.
         self.base_path = None
 
