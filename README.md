@@ -1,4 +1,7 @@
 # Diagnóstico de Esteatose Hepática em Exames de Ultrassom
 
-## Como executar
+## Instalar dependências
 1. `pip install -r requirements.txt`
+
+## Executar
+`python main.py`

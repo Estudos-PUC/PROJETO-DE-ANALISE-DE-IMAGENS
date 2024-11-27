@@ -4,46 +4,61 @@
 # Imports.
 #=========================================
 
-import customtkinter
-from tkinter import filedialog
-from PIL import Image, ImageTk
+# Biblioteca Padrão.
+import os
+import re
+import sys
+import math
+import time
+from tkinter import Tk, filedialog, messagebox, ttk
+
+# Manipular dados.
+import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import tkinter.messagebox
-import tkinter
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import (
+    confusion_matrix,
+    accuracy_score,
+    recall_score,
+    f1_score,
+    classification_report
+)
+from sklearn.svm import SVC
+from sklearn.utils.class_weight import compute_class_weight
+
+# Processamento de Imagens
+from PIL import Image, ImageTk
+from skimage import io
 from skimage.feature import graycomatrix, graycoprops
 from skimage.util import img_as_ubyte
-import os
-import tkinter.ttk as ttk
-import pandas as pd
-import re
-import scipy.io
 import pyfeats
-from skimage import io
-from tkinter import Tk
-from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, f1_score, classification_report
-from sklearn.svm import SVC
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.keras.applications.resnet50 import preprocess_input
+
+# Visualização
+import matplotlib.pyplot as plt
 import seaborn as sns
-from PIL import Image
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-import sys
-from tensorflow.keras.applications import ResNet50
+
+# DeepLearning Frameworks
 from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.layers import Dense, Dropout, GlobalAveragePooling2D
-from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
+from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.regularizers import l2
-from sklearn.utils.class_weight import compute_class_weight
-import math
+
+# GUI
+import customtkinter
+
+#=========================================
+# Constantes Globais.
+#=========================================
 
 SQUARE_SIZE = 28
+
+#=========================================
+# Classe Principal do Aplicativo.
+#=========================================
 
 class App(customtkinter.CTk):
     """
@@ -113,6 +128,10 @@ class App(customtkinter.CTk):
     def train_Resnet50(self):
         self.Resnet50.select_folder()
         self.Resnet50.run()
+
+#=========================================
+# Configuração da Interface (AppConfig).
+#=========================================
 
 class AppConfig:
     """
@@ -225,7 +244,10 @@ class AppConfig:
         )
         self.TrainResnet50_button.grid(row=9, column=0, padx=20, pady=10)
         
-    
+#=========================================
+# Manipulação de Imagens (ImageHandler).
+#=========================================
+
 class ImageHandler:
     """
     Carregar a imagem na janela principal, dar zoom na imagem carregada e calcular o histograma.
@@ -300,7 +322,11 @@ class ImageHandler:
 
     def hide_label(self):
         self.image_label.grid_remove()
-           
+
+#=========================================
+# Matriz de Co-ocorrência de Níveis de Cinza.
+#=========================================
+
 class GLCMHandler:
     """
     Computar e exibir GLCM  de uma ROI ou de todas as ROIs. 
@@ -480,6 +506,10 @@ class GLCMHandler:
         if csv_path:
             df.to_csv(csv_path, index=False)
             tkinter.messagebox.showinfo("Sucesso", f"Arquivo CSV salvo em: {csv_path}")
+
+#=========================================
+# Manipulação de ROIs.
+#=========================================
 
 class ROIHandler:    
 
@@ -869,7 +899,9 @@ class ROIHandler:
         self.points = []
         self.rects = []
 
-
+#=========================================
+# Cálculo do SFM.
+#=========================================
 
 class SFM:
     """
@@ -981,6 +1013,9 @@ class SFM:
         else:
             print("Salvamento cancelado pelo usuario.")
 
+#=========================================
+# Classificador SVM.
+#=========================================
 
 class SVMClassifier:
     def __init__(self,app, kernel='linear', C=2.0):
@@ -1133,6 +1168,9 @@ class SVMClassifier:
     def hide_metrics(self):
         self.metrics_label.grid_remove()
 
+#=========================================
+# Classificador ResNet50.
+#=========================================
 
 class Resnet50:
     def __init__(self, app):
@@ -1190,9 +1228,9 @@ class Resnet50:
                   f"Diagnóstico: {diagnostico}")
         )
 
-    #=========================================
+   
     # Funções Auxiliares.
-    #=========================================
+   
 
     def load_and_preprocess_images(self, df, base_path, img_size=(224, 224)):
         X = []
@@ -1281,10 +1319,7 @@ class Resnet50:
 
 
     def run(self):
-        #=========================================
         # Configuração de Diretórios para Resultados.
-        #=========================================
-
         confusion_matrix_dir = "Matriz_Confusao_Rodada_ResNext"
         acc_graph_dir = "Grafico_Acuracia_Rodada_ResNext"
         results_dir = "Resultados_Finais_ResNext"
@@ -1292,11 +1327,8 @@ class Resnet50:
         os.makedirs(confusion_matrix_dir, exist_ok=True)
         os.makedirs(acc_graph_dir, exist_ok=True)
         os.makedirs(results_dir, exist_ok=True)
-                    
-        #=========================================
+       
         # Carregamento de Dados.
-        #=========================================
-
         file_path = filedialog.askopenfilename(title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
         if not file_path:
             raise ValueError("Nenhum arquivo CSV selecionado.")
@@ -1342,10 +1374,10 @@ class Resnet50:
         print("Distribuição de classes total:")
         print(data['Classe'].value_counts())
 
-        #=========================================
-        # Loop de Treinamento por Paciente.
-        #=========================================
+        # Inicializar timer.
+        start_time = time.time()
 
+        # Loop de Treinamento por Paciente.
         accuracies = []
         conf_matrices = []
 
@@ -1484,9 +1516,12 @@ class Resnet50:
             plt.savefig(os.path.join(acc_graph_dir, f'paciente_{patient}.png'))
             plt.close()
 
-        #=========================================
+        # Cálculo do tempo total
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"\nTempo total para o treinamento: {elapsed_time:.2f} segundos.")
+
         # Resultados finais.
-        #=========================================
         mean_accuracy = np.mean(accuracies)
         print(f"\nMédia de Acurácia: {mean_accuracy:.4f}")
 
@@ -1542,7 +1577,6 @@ class Resnet50:
         plt.tight_layout()
         plt.savefig(os.path.join(results_dir, 'graficos_aprendizado.png'))
         plt.close()
-
 
 
 if __name__ == "__main__":
