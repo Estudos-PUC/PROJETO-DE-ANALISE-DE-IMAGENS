@@ -70,11 +70,10 @@ class App(customtkinter.CTk):
     Metodos: 
         load_image
         gerar_histograma
-        recortar_roi
         calcular_hi
         calcular_glcm
         sidebar_button_event
-        calcular_hi_imagem
+        recortar_roi_calcular_hi_imagem
         calcular_SFM
         classificar_imagem_SVM
     """
@@ -98,11 +97,6 @@ class App(customtkinter.CTk):
     def gerar_histograma(self):
         self.image_handler.gerar_histograma()
 
-    def recortar_roi(self):
-        self.image_handler.hide_label()
-        self.SVMClassifier.hide_metrics()
-        self.roi_handler.show_button_frame(False)
-
     def calcular_hi(self):
         self.image_handler.hide_label()
         self.SVMClassifier.hide_metrics()
@@ -115,10 +109,10 @@ class App(customtkinter.CTk):
     def sidebar_button_event(self):
         print("Teste botao lateral")
 
-    def calcular_hi_imagem(self):
+    def recortar_roi_calcular_hi_imagem(self):
         self.image_handler.hide_label()
         self.SVMClassifier.hide_metrics()
-        self.roi_handler.show_button_frame(True)
+        self.roi_handler.show_button_frame()
 
     def calcular_SFM(self):
         self.SFM.calcular_para_imagem()
@@ -129,7 +123,7 @@ class App(customtkinter.CTk):
         self.SVMClassifier.load_data()
         self.SVMClassifier.validate()
         self.SVMClassifier.plot_confusion_matrix()
-        # self.SVMClassifier.predict_image()
+        self.SVMClassifier.predict_image()
         self.SVMClassifier.calculate_metrics()
         self.SVMClassifier.show_metrics()
 
@@ -198,23 +192,14 @@ class AppConfig:
         self.visualizar_histograma_button.grid(
             row=2, column=0, padx=20, pady=10)
 
-        # Botao lateral Recortar ROI
-        self.recortar_roi_button = customtkinter.CTkButton(
-            self.sidebar_frame,
-            text="Recortar ROI",
-            command=app.recortar_roi,
-            width=200
-        )
-        self.recortar_roi_button.grid(row=3, column=0, padx=20, pady=10)
-
         # Botao lateral Calcular HI
-        self.calcular_hi_button = customtkinter.CTkButton(
+        self.recortar_roi_calcular_hi_button = customtkinter.CTkButton(
             self.sidebar_frame,
-            text="Calcular HI",
-            command=app.calcular_hi_imagem,
+            text="Recortar Roi e Calcular HI",
+            command=app.recortar_roi_calcular_hi_imagem,
             width=200
         )
-        self.calcular_hi_button.grid(row=4, column=0, padx=20, pady=10)
+        self.recortar_roi_calcular_hi_button.grid(row=4, column=0, padx=20, pady=10)
 
         # Botao lateral Computar GLCM
         self.computar_glcm_button = customtkinter.CTkButton(
@@ -552,7 +537,7 @@ class ROIHandler:
         on_click
         save_crop
         calcular_hi_e_ajustar_figado
-        calcular_hi_imagem
+        recortar_roi_calcular_hi_imagem
         on_select_hi
         on_click_hi
         calculate_hi_from_points
@@ -568,7 +553,6 @@ class ROIHandler:
         self.click_x = None
         self.click_y = None
         self.save_button = None
-        self.is_hi = False
         self.zoom_scale = 1.0 
         self.original_image = None
         self.start_x = 0
@@ -609,19 +593,10 @@ class ROIHandler:
 
     def acao2(self):
         zoom_scale = 1
-        if self.is_hi:
-            self.calcular_hi_imagem()
-        else:
-            self.recortar_roi()
+        self.recortar_roi_calcular_hi_imagem()
 
-    def show_button_frame(self, flag):
-        texto = ""
-        self.is_hi = flag
-
-        if self.is_hi:
-            texto = "Calcular HI"
-        else:
-            texto = "Recortar ROI"
+    def show_button_frame(self):
+        texto = "Selecione uma opção:"
 
         self.title_label.configure(text=texto)
         self.main_frame.grid(row=0, column=1, padx=20, pady=20, sticky="n")
@@ -630,148 +605,6 @@ class ROIHandler:
 
     def hide_button_frame(self):
         self.button_frame.grid_remove()
-
-    def recortar_roi(self):
-        # Abrir nova janela para selecao de paciente e exibicao de img.
-        self.recorte_window = customtkinter.CTkToplevel()
-        self.recorte_window.title("Selecionar Paciente e Recortar ROI")
-        self.recorte_window.geometry("1000x600")
-
-        # Layout da janela.
-        self.recorte_window.grid_columnconfigure(0, weight=1)
-        self.recorte_window.grid_columnconfigure(1, weight=4)
-        self.recorte_window.grid_rowconfigure(0, weight=1)
-
-        # Lista de pacientes.
-        self.patient_listbox = tkinter.Listbox(
-            self.recorte_window, font=("Arial", 14))
-        self.patient_listbox.grid(
-            row=0, column=0, sticky="nsew", padx=10, pady=10)
-
-        # Canvas para exibir img.
-        self.canvas_frame = customtkinter.CTkFrame(self.recorte_window)
-        self.canvas_frame.grid(
-            row=0, column=1, sticky="nsew", padx=10, pady=10)
-
-        self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
-        self.canvas.pack(fill="both", expand=True)
-
-        # Carregar dados .mat
-        file_path = filedialog.askopenfilename(
-            filetypes=[("MAT files", "*.mat")])
-        if file_path:
-            mat_data = scipy.io.loadmat(file_path)
-            data_array = mat_data['data']
-            images = data_array['images']
-
-            # Lista para armazenar todas imgs e indices.
-            self.image_list = []
-            for patient_idx in range(images.shape[1]):
-                patient_images = images[0, patient_idx]
-                for img_idx in range(len(patient_images)):
-                    img = patient_images[img_idx]
-                    self.image_list.append((img, patient_idx, img_idx))
-                    self.patient_listbox.insert(tkinter.END, f"Paciente {
-                                                patient_idx}, Imagem {img_idx}")
-
-        # Vincular selecao da lista -> exibicao da img.
-        self.patient_listbox.bind('<<ListboxSelect>>', self.on_select)
-
-    def on_select(self, event):
-        # Carregar img selecionada.
-        selection = self.patient_listbox.curselection()
-        if selection:
-            index = selection[0]
-            image_data = self.image_list[index][0]
-
-            if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror(
-                    "Erro", "Dados da imagem invalidos.")
-                return
-
-            self.img = Image.fromarray(image_data)
-
-            self.tk_img = ImageTk.PhotoImage(self.img)
-
-            # Exibir img no canvas.
-            self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
-
-            # Vincular clique para desenhar ROI.
-            self.canvas.bind("<Button-1>", self.on_click)
-
-            # Salvar indice do paciente e da img selecionados.
-            self.selected_patient_idx = self.image_list[index][1]
-            self.selected_img_idx = self.image_list[index][2]
-
-    def on_click(self, event):
-        # Limpar retangulo anterior.
-        if hasattr(self, 'rect') and self.rect:
-            self.canvas.delete(self.rect)
-
-        # Coordenadas do retangulo na img.
-        x1 = event.x - (SQUARE_SIZE * self.zoom_scale) // 2
-        y1 = event.y - (SQUARE_SIZE * self.zoom_scale) // 2
-        x2 = event.x + (SQUARE_SIZE * self.zoom_scale) // 2
-        y2 = event.y + (SQUARE_SIZE * self.zoom_scale) // 2
-
-        # Desenhar retangulo na img.
-        self.rect = self.canvas.create_rectangle(
-            x1, y1, x2, y2, outline='green', width=3)
-
-        # Salvar as coordenadas do clique.
-        self.click_x = event.x
-        self.click_y = event.y
-
-        # Se nao existir, add botao para salvar recorte.
-        if not self.save_button:
-            self.save_button = customtkinter.CTkButton(
-                self.recorte_window, text="Salvar Recorte", command=self.save_crop)
-            self.save_button.place(
-                relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
-            # Binding em Enter para salvar recorte.
-            self.recorte_window.bind(
-                '<Return>', lambda event: self.save_crop())
-
-    def save_crop(self):
-
-        # Coordenadas do retangulo na img original.
-        x1 = self.click_x - ((SQUARE_SIZE * self.zoom_scale) // 2)
-        y1 = self.click_y - ((SQUARE_SIZE * self.zoom_scale) // 2)
-        x2 = self.click_x + ((SQUARE_SIZE * self.zoom_scale) // 2)
-        y2 = self.click_y + ((SQUARE_SIZE * self.zoom_scale) // 2)
-
-        # Garantir que coordenadas estao dentro dos limites da img.
-        x1 = max(0, x1)
-        y1 = max(0, y1)
-        x2 = min(self.img.width, x2)
-        y2 = min(self.img.height, y2)
-
-        # Recortar img.
-        crop_box = (x1, y1, x2, y2)
-        cropped_img = self.img.crop(crop_box)
-
-        # Criar nome de arquivo padrao -> ROI_nn_mm.
-        filename = f"ROI_{self.selected_patient_idx:02d}_{
-            self.selected_img_idx}"
-
-        # Abrir dialogo de "Salvar Como" com nome de arquivo padrao.
-        save_path = filedialog.asksaveasfilename(
-            defaultextension=".png",
-            initialfile=filename,
-            filetypes=[("PNG files", "*.png")]
-        )
-
-        if save_path:
-            cropped_img.save(save_path)
-
-            # Salvar coordenadas ROI em um arquivo de texto compartilhado.
-            coord_save_path = "ROI_coordinates.txt"
-            with open(coord_save_path, 'a') as f:
-                f.write(
-                    f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
-
-            tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {
-                                        save_path}\nCoordenadas salvas em {coord_save_path}")
 
     def calcular_hi_e_ajustar_figado(self):
         # Diretorios das ROIs.
@@ -823,7 +656,7 @@ class ROIHandler:
         tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {
                                     output_dir}\n valores do HI salvos em {hi_save_path}")
 
-    def calcular_hi_imagem(self):
+    def recortar_roi_calcular_hi_imagem(self):
         # Abrir nova janela para selecao de paciente e exibicao de img.
         self.hi_window = customtkinter.CTkToplevel()
         self.hi_window.title("Selecionar Paciente e Calcular HI")
