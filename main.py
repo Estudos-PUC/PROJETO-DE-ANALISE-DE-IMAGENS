@@ -872,6 +872,7 @@ class ROIHandler:
     def on_select_hi(self, event):
         # Carregar a img selecionada.
         selection = self.patient_listbox.curselection()
+        self.zoom_scale = 1
         if selection:
             index = selection[0]
             image_data = self.image_list[index][0]
@@ -883,45 +884,70 @@ class ROIHandler:
                 return
 
             self.img = Image.fromarray(image_data).convert("L")
-
+            self.original_image = self.img.copy()
             self.tk_img = ImageTk.PhotoImage(self.img)
 
             # Limpar qualquer conteudo anterior do canvas.
             self.canvas.delete("all")
 
+
+            self.image_x = 0
+            self.image_y = 0
+
             # Exibir img no canvas.
-            self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
+            self.image_id = self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
 
             # Bind clique para selecionar pontos.
+            self.canvas.bind("<MouseWheel>", self.zoom_image)
             self.canvas.bind("<Button-1>", self.on_click_hi)
+            self.canvas.bind("<Button-3>", self.start_drag)    # Iniciar arrasto
+            self.canvas.bind("<B3-Motion>", self.drag_image)   # Arrastar imagem
 
             # Salvar indice do paciente e da img selecionados.
             self.selected_patient_idx = self.image_list[index][1]
             self.selected_img_idx = self.image_list[index][2]
+            self.selected_img_idx = index
 
             self.points = []
             self.rects = []
 
     def on_click_hi(self, event):
+        # Verificar se o clique está dentro da imagem exibida no Canvas
+        img_width = self.original_image.width * self.zoom_scale
+        img_height = self.original_image.height * self.zoom_scale
+
+        if not (self.image_x <= event.x <= self.image_x + img_width and
+                self.image_y <= event.y <= self.image_y + img_height):
+            tkinter.messagebox.showerror("Erro", "Clique fora da imagem.")
+            return
+
         if len(self.rects) == 2:
             return
-        # Desenhar retangulo no ponto clicado.
-        x1 = event.x - (SQUARE_SIZE * self.zoom_scale) // 2
-        y1 = event.y - (SQUARE_SIZE * self.zoom_scale) // 2
-        x2 = event.x + (SQUARE_SIZE * self.zoom_scale) // 2
-        y2 = event.y + (SQUARE_SIZE * self.zoom_scale) // 2
 
-        if not len(self.rects) == 2:
-            rect = self.canvas.create_rectangle(
-                x1, y1, x2, y2, outline='red', width=2)
-            self.rects.append(rect)
-            # Salvar coordenadas do clique.
-            self.points.append((event.x, event.y))
+        # Coordenadas relativas ao Canvas (onde o clique ocorreu)
+        canvas_x = event.x
+        canvas_y = event.y
+
+        # Coordenadas relativas à imagem original
+        img_x = (canvas_x - self.image_x) / self.zoom_scale
+        img_y = (canvas_y - self.image_y) / self.zoom_scale
+
+        # Armazenar as coordenadas relativas à imagem original
+        self.points.append((img_x, img_y))
+
+        # Desenhar o retângulo no Canvas
+        x1 = self.image_x + img_x * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
+        y1 = self.image_y + img_y * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
+        x2 = self.image_x + img_x * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
+        y2 = self.image_y + img_y * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
+
+        rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green', width=3)
+        self.rects.append(rect)
 
         if len(self.points) == 2:
-            # Apos dois pontos selecionados calcular o HI.
             self.calculate_hi_from_points()
-            # Resetar os pontos e retangulos para permitir novas selecoes.
+
+
 
     def calculate_hi_from_points(self):
         (x1, y1) = self.points[0]
@@ -945,20 +971,6 @@ class ROIHandler:
             max(0, int(y2 - SQUARE_SIZE // 2)),
             min(self.img.width, int(x2 + SQUARE_SIZE // 2)),
             min(self.img.height, int(y2 + SQUARE_SIZE // 2)),
-        )
-
-        # Garantir que coordenadas estejam dentro dos limites da img.
-        box1 = (
-            max(0, box1[0]),
-            max(0, box1[1]),
-            min(self.img.width, box1[2]),
-            min(self.img.height, box1[3])
-        )
-        box2 = (
-            max(0, box2[0]),
-            max(0, box2[1]),
-            min(self.img.width, box2[2]),
-            min(self.img.height, box2[3])
         )
 
         # Recortar regioes.
@@ -1049,9 +1061,13 @@ class ROIHandler:
         self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
-        # Carregar imagens no formato .jpg ou .png
+
         file_paths = filedialog.askopenfilenames(
-            filetypes=[("Imagens", "*.jpg;*.jpeg;*.png")]
+            filetypes=[
+                ("JPG files", "*.jpg"),
+                ("PNG files", "*.png"),
+                ("JPEG files", "*.jpeg")
+            ]
         )
 
         if file_paths:
@@ -1100,9 +1116,6 @@ class ROIHandler:
             self.canvas.bind("<Button-1>", self.on_click_hi)
             self.canvas.bind("<Button-3>", self.start_drag)    # Iniciar arrasto
             self.canvas.bind("<B3-Motion>", self.drag_image)   # Arrastar imagem
-
-            # Bind para zoom na imagem usando roda do mouse
-
 
             # Salvar o caminho do arquivo e índice
             self.selected_file_path = file_path
