@@ -189,8 +189,6 @@ class AppConfig:
         )
         self.computar_glcm_button.grid(row=5, column=0, padx=20, pady=10)
 
-        self.sidebar_frame.grid_rowconfigure(9, weight=1)
-
         # Botao lateral SFM
         self.caracterizar_roi_button = customtkinter.CTkButton(
             self.sidebar_frame,
@@ -225,7 +223,7 @@ class AppConfig:
             command=app.train_Resnet50,
             width=200
         )
-        self.Resnet50_button.grid(row=9, column=0, padx=20, pady=10)
+        self.TrainResnet50_button.grid(row=9, column=0, padx=20, pady=10)
         
     
 class ImageHandler:
@@ -1151,6 +1149,7 @@ class Resnet50:
         self.base_path = filedialog.askdirectory(
             title="Select Folder"
         )
+        self.base_path = r"C:\Users\pedro\Documents\GitHub\PROJETO-DE-ANALISE-DE-IMAGENS\Figado_Ajustado"
 
     def preprocess_new_image(self, img_path, img_size=(224, 224)):
         img = load_img(img_path, target_size=img_size, color_mode="rgb")
