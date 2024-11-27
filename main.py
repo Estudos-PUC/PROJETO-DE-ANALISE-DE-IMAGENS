@@ -1246,7 +1246,12 @@ class SVMClassifier:
         """Permite que o usuário escolha uma imagem, a processa e realiza a predição."""
         # Abrir seletor de arquivo
         file_path = filedialog.askopenfilename(title="Selecione a imagem",
-                                               filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+            filetypes=[
+                ("JPG files", ".jpg"),
+                ("PNG files", ".png"),
+                ("JPEG files", "*.jpeg")
+            ]
+        )
         if not file_path:
             tkinter.messagebox.showinfo(
                 "Informação", "Nenhuma imagem selecionada.")
@@ -1353,8 +1358,17 @@ class Resnet50:
         predicted_class = (prediction > 0.5).astype(int)[0][0]
 
         # Determinar o diagnóstico
-        diagnostico = 'Saudável' if predicted_class == 0 else 'Esteatose Hepática'
-        print(diagnostico)
+        
+        try:
+            img_array = self.preprocess_new_image(img_path)
+            prediction = self.model.predict(img_array)
+            predicted_class = (prediction > 0.5).astype(int)[0][0]
+            result = 'Saudável' if predicted_class == 0 else 'Esteatose Hepática'
+            tkinter.messagebox.showinfo(
+                "Resultado", f"A predição para a imagem é: {result}")
+        except Exception as e:
+            tkinter.messagebox.showerror(
+                "Erro", f"Erro ao realizar a predição: {e}")
 
     # Funções Auxiliares.
 
