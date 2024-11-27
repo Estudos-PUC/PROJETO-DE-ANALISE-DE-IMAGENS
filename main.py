@@ -1,8 +1,8 @@
 # Copyright(c) Eduardo Lemos, Fernanda Gomes, Pedro Olyntho - 2024
 
-#=========================================
+# =========================================
 # Imports.
-#=========================================
+# =========================================
 
 # Biblioteca Padrão.
 import os
@@ -52,20 +52,21 @@ from tensorflow.keras.regularizers import l2
 # GUI
 import customtkinter
 
-#=========================================
+# =========================================
 # Constantes Globais.
-#=========================================
+# =========================================
 
 SQUARE_SIZE = 28
 
-#=========================================
+# =========================================
 # Classe Principal do Aplicativo.
-#=========================================
+# =========================================
+
 
 class App(customtkinter.CTk):
     """
     Configurar a interface principal do programa e inicializar manipuladores das imgs.
-    
+
     Metodos: 
         load_image
         gerar_histograma
@@ -77,6 +78,7 @@ class App(customtkinter.CTk):
         calcular_SFM
         classificar_imagem_SVM
     """
+
     def __init__(self):
         super().__init__()
         self.config = AppConfig(self)
@@ -89,6 +91,7 @@ class App(customtkinter.CTk):
 
     def load_image(self):
         self.SVMClassifier.hide_metrics()
+        self.roi_handler.hide_button_frame()
         self.image_handler.show_label()
         self.image_handler.load_image()
 
@@ -96,9 +99,14 @@ class App(customtkinter.CTk):
         self.image_handler.gerar_histograma()
 
     def recortar_roi(self):
-        self.roi_handler.recortar_roi()
+        self.image_handler.hide_label()
+        self.SVMClassifier.hide_metrics()
+        self.roi_handler.show_button_frame(False)
 
     def calcular_hi(self):
+        self.image_handler.hide_label()
+        self.SVMClassifier.hide_metrics()
+        self.roi_handler.show_button_frame()
         self.roi_handler.calcular_hi_e_ajustar_figado()
 
     def calcular_glcm(self):
@@ -108,12 +116,15 @@ class App(customtkinter.CTk):
         print("Teste botao lateral")
 
     def calcular_hi_imagem(self):
-        self.roi_handler.calcular_hi_imagem()
+        self.image_handler.hide_label()
+        self.SVMClassifier.hide_metrics()
+        self.roi_handler.show_button_frame(True)
 
     def calcular_SFM(self):
         self.SFM.calcular_para_imagem()
-    
+
     def classificar_imagem_SVM(self):
+        self.roi_handler.hide_button_frame()
         self.image_handler.hide_label()
         self.SVMClassifier.load_data()
         self.SVMClassifier.validate()
@@ -131,19 +142,21 @@ class App(customtkinter.CTk):
         self.Resnet50.select_folder()
         self.Resnet50.run()
 
-#=========================================
+# =========================================
 # Configuração da Interface (AppConfig).
-#=========================================
+# =========================================
+
 
 class AppConfig:
     """
     Criar janela do programa, configurando a barra lateral com os botoes para manipulacao das imgs.
-    
+
     Metodos:
         create_sidebar
     """
+
     def __init__(self, app):
-        # Definir configuracoes iniciais do menu 
+        # Definir configuracoes iniciais do menu
         app.title("Diagnostico de Esteatose Hepatica em Exames de Ultrassom")
         app.geometry(f"{1100}x{580}")
         app.grid_columnconfigure(1, weight=1)
@@ -153,7 +166,8 @@ class AppConfig:
 
     # Exibir barra lateral do menu
     def create_sidebar(self, app):
-        self.sidebar_frame = customtkinter.CTkFrame(app, width=250, corner_radius=0)
+        self.sidebar_frame = customtkinter.CTkFrame(
+            app, width=250, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=10, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(10, weight=1)
 
@@ -173,7 +187,7 @@ class AppConfig:
             width=200
         )
         self.load_image_button.grid(row=1, column=0, padx=20, pady=10)
-        
+
         # Botao lateral Visualizar Histograma
         self.visualizar_histograma_button = customtkinter.CTkButton(
             self.sidebar_frame,
@@ -181,7 +195,8 @@ class AppConfig:
             command=app.gerar_histograma,
             width=200
         )
-        self.visualizar_histograma_button.grid(row=2, column=0, padx=20, pady=10)
+        self.visualizar_histograma_button.grid(
+            row=2, column=0, padx=20, pady=10)
 
         # Botao lateral Recortar ROI
         self.recortar_roi_button = customtkinter.CTkButton(
@@ -245,43 +260,48 @@ class AppConfig:
             width=200
         )
         self.TrainResnet50_button.grid(row=9, column=0, padx=20, pady=10)
-        
-#=========================================
+
+# =========================================
 # Manipulação de Imagens (ImageHandler).
-#=========================================
+# =========================================
+
 
 class ImageHandler:
     """
     Carregar a imagem na janela principal, dar zoom na imagem carregada e calcular o histograma.
-    
+
     Metodos: 
         load_image
         display_image
         zoom_image
         gerar_histograma
     """
+
     def __init__(self, app):
         self.img = None
         self.img_resized = None
         self.zoom_scale = 1.0  # Variavel para controlar o zoom da img.
-        self.image_label = customtkinter.CTkLabel(app, text="Nenhuma Imagem Carregada")
+        self.image_label = customtkinter.CTkLabel(
+            app, text="Nenhuma Imagem Carregada")
         self.image_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
     def load_image(self):
         file_path = filedialog.askopenfilename()
         if file_path:
             self.img = Image.open(file_path)
-            self.img_resized = self.img.copy()  # Inicialmente, a img redimensionada e a original
+            # Inicialmente, a img redimensionada e a original
+            self.img_resized = self.img.copy()
             self.display_image()
 
             # Vincular eventos de rolagem do mouse para o zoom.
             self.image_label.bind("<MouseWheel>", self.zoom_image)
-    
+
     # Exibir imgs no menu principal.
     def display_image(self):
         # Redimensionar a img de acordo com zoom.
         width, height = self.img.size
-        new_size = (int(width * self.zoom_scale), int(height * self.zoom_scale))
+        new_size = (int(width * self.zoom_scale),
+                    int(height * self.zoom_scale))
         img_resized = self.img.resize(new_size)
 
         img_tk = ImageTk.PhotoImage(img_resized)
@@ -296,7 +316,7 @@ class ImageHandler:
             self.zoom_scale /= 1.1  # zoom - 10%
 
         # Limitar zoom para evitar extremos.
-        self.zoom_scale = max(0.1, min(self.zoom_scale, 10)) 
+        self.zoom_scale = max(0.1, min(self.zoom_scale, 10))
 
         # Atualizar exibicao conforme zoom.
         self.display_image()
@@ -309,7 +329,8 @@ class ImageHandler:
         img_array = np.array(self.img)
 
         # Calcular histograma com 256 bins (intervalos de pixel de 0 a 255).
-        hist, bins = np.histogram(img_array.flatten(), bins=256, range=[0, 256])
+        hist, bins = np.histogram(
+            img_array.flatten(), bins=256, range=[0, 256])
 
         # Plotar histograma ->  Matplotlib
         plt.figure()
@@ -325,14 +346,15 @@ class ImageHandler:
     def hide_label(self):
         self.image_label.grid_remove()
 
-#=========================================
+# =========================================
 # Matriz de Co-ocorrência de Níveis de Cinza.
-#=========================================
+# =========================================
+
 
 class GLCMHandler:
     """
     Computar e exibir GLCM  de uma ROI ou de todas as ROIs. 
-    
+
     Metodos: 
         computar_glcm_roi
         computar_glcm_roi_directory
@@ -341,6 +363,7 @@ class GLCMHandler:
         display_features_directory
         save_features_to_csv
     """
+
     def __init__(self, app):
         self.app = app
 
@@ -352,22 +375,24 @@ class GLCMHandler:
         if roi_path:
             features = self.process_image(roi_path)
             self.display_features(roi_path, features)
-        
+
     def computar_glcm_roi_directory(self):
-        dir_path = filedialog.askdirectory(title="Selecione o diretorio com as ROIs")
+        dir_path = filedialog.askdirectory(
+            title="Selecione o diretorio com as ROIs")
         if dir_path:
             image_files = [f for f in os.listdir(dir_path) if f.lower().endswith(
                 ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff'))]
-            
+
             # Ordena arquivos com números `zero-padded` na ordem natural.
             def natural_sort_key(f):
                 # Extrai os segmentos e os ordena a partir dos números.
                 return [int(num) if num.isdigit() else num for num in re.split(r'(\d+)', f)]
-            
+
             image_files.sort(key=natural_sort_key)
 
             if not image_files:
-                tkinter.messagebox.showinfo("Informacao", "Nenhuma imagem encontrada no diretorio selecionado.")
+                tkinter.messagebox.showinfo(
+                    "Informacao", "Nenhuma imagem encontrada no diretorio selecionado.")
                 return
 
             all_features = []
@@ -393,7 +418,7 @@ class GLCMHandler:
         features = {}
 
         for d in distances:
-            angles = np.deg2rad(np.arange(0, 360, 1))  
+            angles = np.deg2rad(np.arange(0, 360, 1))
             # Calula GLCM para todos os angulos possiveis.
             glcm = graycomatrix(
                 roi_array,
@@ -409,8 +434,6 @@ class GLCMHandler:
             # Para cada angulo, calcule a homogeneidade.
             homog = graycoprops(glcm, prop='homogeneity')
             features[f'homogeneity_d{d}'] = np.sum(homog)
-
-
 
         return features
 
@@ -438,7 +461,8 @@ class GLCMHandler:
         feature_frame = customtkinter.CTkFrame(feature_window)
         feature_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        feature_label = customtkinter.CTkLabel(feature_frame, text="Valores Calculados", font=("Arial", 16))
+        feature_label = customtkinter.CTkLabel(
+            feature_frame, text="Valores Calculados", font=("Arial", 16))
         feature_label.pack(pady=(0, 10))
 
         # Listbox para display das features.
@@ -481,7 +505,8 @@ class GLCMHandler:
             tree.insert('', tkinter.END, values=row)
 
         # Scrollbar.
-        scrollbar = tkinter.Scrollbar(tree, orient='vertical', command=tree.yview)
+        scrollbar = tkinter.Scrollbar(
+            tree, orient='vertical', command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side='right', fill='y')
 
@@ -507,18 +532,20 @@ class GLCMHandler:
         )
         if csv_path:
             df.to_csv(csv_path, index=False)
-            tkinter.messagebox.showinfo("Sucesso", f"Arquivo CSV salvo em: {csv_path}")
+            tkinter.messagebox.showinfo(
+                "Sucesso", f"Arquivo CSV salvo em: {csv_path}")
 
-#=========================================
+# =========================================
 # Manipulação de ROIs.
-#=========================================
+# =========================================
 
-class ROIHandler:    
+
+class ROIHandler:
 
     """
     Recortar ROI e calcular HI
 
-    
+
     Mestodos:
         recortar_roi
         on_select
@@ -541,31 +568,97 @@ class ROIHandler:
         self.click_x = None
         self.click_y = None
         self.save_button = None
+        self.is_hi = False
+        self.zoom_scale = 1.0 
+        self.original_image = None
+        self.start_x = 0
+        self.start_y = 0
+        self.image_x = 0
+        self.image_y = 0 
+        self.image_id = None
+        self.rects = []
+
+        self.main_frame = customtkinter.CTkFrame(app)
+        self.button_frame = customtkinter.CTkFrame(self.main_frame)
+
+        self.title_label = customtkinter.CTkLabel(
+            self.main_frame, text="", font=("Helvetica", 16, "bold"), anchor="center"
+        )
+
+        self.button1 = customtkinter.CTkButton(
+            self.button_frame, text="Carregar Imagem", command=self.acao1
+        )
+        self.button2 = customtkinter.CTkButton(
+            self.button_frame, text="Carregar arquivo .mat", command=self.acao2
+        )
+
+        self.button1 = customtkinter.CTkButton(
+            self.button_frame, text="Carregar Imagem", command=self.acao1
+        )
+        self.button2 = customtkinter.CTkButton(
+            self.button_frame, text="Carregar arquivo .mat", command=self.acao2
+        )
+
+        # Posicionar os botões lado a lado
+        self.button1.grid(row=0, column=0, padx=10, pady=10)
+        self.button2.grid(row=0, column=1, padx=10, pady=10)
+
+    def acao1(self):
+        zoom_scale = 1
+        self.calcular_hi_jpg()
+
+    def acao2(self):
+        zoom_scale = 1
+        if self.is_hi:
+            self.calcular_hi_imagem()
+        else:
+            self.recortar_roi()
+
+    def show_button_frame(self, flag):
+        texto = ""
+        self.is_hi = flag
+
+        if self.is_hi:
+            texto = "Calcular HI"
+        else:
+            texto = "Recortar ROI"
+
+        self.title_label.configure(text=texto)
+        self.main_frame.grid(row=0, column=1, padx=20, pady=20, sticky="n")
+        self.title_label.grid(row=0, column=0, pady=(10, 20), sticky="n")
+        self.button_frame.grid(row=1, column=0, pady=20, sticky="n")
+
+    def hide_button_frame(self):
+        self.button_frame.grid_remove()
 
     def recortar_roi(self):
         # Abrir nova janela para selecao de paciente e exibicao de img.
         self.recorte_window = customtkinter.CTkToplevel()
         self.recorte_window.title("Selecionar Paciente e Recortar ROI")
         self.recorte_window.geometry("1000x600")
-        
+
         # Layout da janela.
         self.recorte_window.grid_columnconfigure(0, weight=1)
         self.recorte_window.grid_columnconfigure(1, weight=4)
         self.recorte_window.grid_rowconfigure(0, weight=1)
 
         # Lista de pacientes.
-        self.patient_listbox = tkinter.Listbox(self.recorte_window, font=("Arial", 14))
-        self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.patient_listbox = tkinter.Listbox(
+            self.recorte_window, font=("Arial", 14))
+        self.patient_listbox.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         # Canvas para exibir img.
         self.canvas_frame = customtkinter.CTkFrame(self.recorte_window)
-        self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.canvas_frame.grid(
+            row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
         # Carregar dados .mat
-        file_path = filedialog.askopenfilename(filetypes=[("MAT files", "*.mat")])
+        file_path = filedialog.askopenfilename(
+            filetypes=[("MAT files", "*.mat")])
         if file_path:
             mat_data = scipy.io.loadmat(file_path)
             data_array = mat_data['data']
@@ -578,7 +671,8 @@ class ROIHandler:
                 for img_idx in range(len(patient_images)):
                     img = patient_images[img_idx]
                     self.image_list.append((img, patient_idx, img_idx))
-                    self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
+                    self.patient_listbox.insert(tkinter.END, f"Paciente {
+                                                patient_idx}, Imagem {img_idx}")
 
         # Vincular selecao da lista -> exibicao da img.
         self.patient_listbox.bind('<<ListboxSelect>>', self.on_select)
@@ -591,7 +685,8 @@ class ROIHandler:
             image_data = self.image_list[index][0]
 
             if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
+                tkinter.messagebox.showerror(
+                    "Erro", "Dados da imagem invalidos.")
                 return
 
             self.img = Image.fromarray(image_data)
@@ -614,13 +709,14 @@ class ROIHandler:
             self.canvas.delete(self.rect)
 
         # Coordenadas do retangulo na img.
-        x1 = event.x - SQUARE_SIZE // 2
-        y1 = event.y - SQUARE_SIZE // 2
-        x2 = event.x + SQUARE_SIZE // 2
-        y2 = event.y + SQUARE_SIZE // 2
+        x1 = event.x - (SQUARE_SIZE * self.zoom_scale) // 2
+        y1 = event.y - (SQUARE_SIZE * self.zoom_scale) // 2
+        x2 = event.x + (SQUARE_SIZE * self.zoom_scale) // 2
+        y2 = event.y + (SQUARE_SIZE * self.zoom_scale) // 2
 
         # Desenhar retangulo na img.
-        self.rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='green', width=3)
+        self.rect = self.canvas.create_rectangle(
+            x1, y1, x2, y2, outline='green', width=3)
 
         # Salvar as coordenadas do clique.
         self.click_x = event.x
@@ -628,18 +724,21 @@ class ROIHandler:
 
         # Se nao existir, add botao para salvar recorte.
         if not self.save_button:
-            self.save_button = customtkinter.CTkButton(self.recorte_window, text="Salvar Recorte", command=self.save_crop)
-            self.save_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
+            self.save_button = customtkinter.CTkButton(
+                self.recorte_window, text="Salvar Recorte", command=self.save_crop)
+            self.save_button.place(
+                relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
             # Binding em Enter para salvar recorte.
-            self.recorte_window.bind('<Return>', lambda event: self.save_crop())
-    
+            self.recorte_window.bind(
+                '<Return>', lambda event: self.save_crop())
+
     def save_crop(self):
 
         # Coordenadas do retangulo na img original.
-        x1 = self.click_x - (SQUARE_SIZE // 2)
-        y1 = self.click_y - (SQUARE_SIZE // 2)
-        x2 = self.click_x + (SQUARE_SIZE // 2)
-        y2 = self.click_y + (SQUARE_SIZE // 2)
+        x1 = self.click_x - ((SQUARE_SIZE * self.zoom_scale) // 2)
+        y1 = self.click_y - ((SQUARE_SIZE * self.zoom_scale) // 2)
+        x2 = self.click_x + ((SQUARE_SIZE * self.zoom_scale) // 2)
+        y2 = self.click_y + ((SQUARE_SIZE * self.zoom_scale) // 2)
 
         # Garantir que coordenadas estao dentro dos limites da img.
         x1 = max(0, x1)
@@ -652,7 +751,8 @@ class ROIHandler:
         cropped_img = self.img.crop(crop_box)
 
         # Criar nome de arquivo padrao -> ROI_nn_mm.
-        filename = f"ROI_{self.selected_patient_idx:02d}_{self.selected_img_idx}"
+        filename = f"ROI_{self.selected_patient_idx:02d}_{
+            self.selected_img_idx}"
 
         # Abrir dialogo de "Salvar Como" com nome de arquivo padrao.
         save_path = filedialog.asksaveasfilename(
@@ -667,9 +767,11 @@ class ROIHandler:
             # Salvar coordenadas ROI em um arquivo de texto compartilhado.
             coord_save_path = "ROI_coordinates.txt"
             with open(coord_save_path, 'a') as f:
-                f.write(f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
+                f.write(
+                    f"{filename}: Coordinates of top-left corner: (x={x1}, y={y1})\n")
 
-            tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {save_path}\nCoordenadas salvas em {coord_save_path}")
+            tkinter.messagebox.showinfo("Salvo", f"Imagem recortada salva em {
+                                        save_path}\nCoordenadas salvas em {coord_save_path}")
 
     def calcular_hi_e_ajustar_figado(self):
         # Diretorios das ROIs.
@@ -687,7 +789,8 @@ class ROIHandler:
                 if filename.endswith(".png") and "RIM" not in filename:
                     # Carregar ROI do figado e do rim correspondente.
                     figado_path = os.path.join(figado_dir, filename)
-                    rim_path = os.path.join(rim_dir, filename.replace('.png', '_RIM.png'))
+                    rim_path = os.path.join(
+                        rim_dir, filename.replace('.png', '_RIM.png'))
 
                     if not os.path.exists(rim_path):
                         continue
@@ -706,42 +809,48 @@ class ROIHandler:
                     hi_file.write(f"{filename.replace('.png', '')}, {hi}\n")
 
                     # Ajustar tons de cinza da ROI do figado.
-                    ajustado_figado_array = np.clip(np.round(figado_array * hi), 0, 255).astype(np.uint8)
+                    ajustado_figado_array = np.clip(
+                        np.round(figado_array * hi), 0, 255).astype(np.uint8)
 
                     # Criar img ajustada do figado.
-                    ajustado_figado_img = Image.fromarray(ajustado_figado_array)
+                    ajustado_figado_img = Image.fromarray(
+                        ajustado_figado_array)
 
                     # Salvar ROI ajustada do figado.
                     ajustado_figado_path = os.path.join(output_dir, filename)
                     ajustado_figado_img.save(ajustado_figado_path)
 
-        tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {output_dir}\n valores do HI salvos em {hi_save_path}")
-
+        tkinter.messagebox.showinfo("Salvo", f"Imagens ajustadas e salvas em {
+                                    output_dir}\n valores do HI salvos em {hi_save_path}")
 
     def calcular_hi_imagem(self):
         # Abrir nova janela para selecao de paciente e exibicao de img.
         self.hi_window = customtkinter.CTkToplevel()
         self.hi_window.title("Selecionar Paciente e Calcular HI")
         self.hi_window.geometry("1000x600")
-        
+
         # Configurar layout da nova janela.
         self.hi_window.grid_columnconfigure(0, weight=1)
         self.hi_window.grid_columnconfigure(1, weight=4)
         self.hi_window.grid_rowconfigure(0, weight=1)
 
         # Lista de pacientes.
-        self.patient_listbox = tkinter.Listbox(self.hi_window, font=("Arial", 14))
-        self.patient_listbox.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.patient_listbox = tkinter.Listbox(
+            self.hi_window, font=("Arial", 14))
+        self.patient_listbox.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         # Canvas para exibir img.
         self.canvas_frame = customtkinter.CTkFrame(self.hi_window)
-        self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+        self.canvas_frame.grid(
+            row=0, column=1, sticky="nsew", padx=10, pady=10)
 
         self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
         self.canvas.pack(fill="both", expand=True)
 
         # Carregar dados .mat e preencher lista de pacientes.
-        file_path = filedialog.askopenfilename(filetypes=[("MAT files", "*.mat")])
+        file_path = filedialog.askopenfilename(
+            filetypes=[("MAT files", "*.mat")])
         if file_path:
             mat_data = scipy.io.loadmat(file_path)
             data_array = mat_data['data']
@@ -754,7 +863,8 @@ class ROIHandler:
                 for img_idx in range(len(patient_images)):
                     img = patient_images[img_idx]
                     self.image_list.append((img, patient_idx, img_idx))
-                    self.patient_listbox.insert(tkinter.END, f"Paciente {patient_idx}, Imagem {img_idx}")
+                    self.patient_listbox.insert(tkinter.END, f"Paciente {
+                                                patient_idx}, Imagem {img_idx}")
 
         # Vincular selecao da lista a exibicao da img.
         self.patient_listbox.bind('<<ListboxSelect>>', self.on_select_hi)
@@ -768,7 +878,8 @@ class ROIHandler:
 
             # Verificar se image_data e um array NumPy.
             if not isinstance(image_data, np.ndarray):
-                tkinter.messagebox.showerror("Erro", "Dados da imagem invalidos.")
+                tkinter.messagebox.showerror(
+                    "Erro", "Dados da imagem invalidos.")
                 return
 
             self.img = Image.fromarray(image_data).convert("L")
@@ -792,20 +903,20 @@ class ROIHandler:
             self.rects = []
 
     def on_click_hi(self, event):
-        if len(self.rects) == 2: return 
+        if len(self.rects) == 2:
+            return
         # Desenhar retangulo no ponto clicado.
-        x1 = event.x - SQUARE_SIZE // 2
-        y1 = event.y - SQUARE_SIZE // 2
-        x2 = event.x + SQUARE_SIZE // 2
-        y2 = event.y + SQUARE_SIZE // 2
-
+        x1 = event.x - (SQUARE_SIZE * self.zoom_scale) // 2
+        y1 = event.y - (SQUARE_SIZE * self.zoom_scale) // 2
+        x2 = event.x + (SQUARE_SIZE * self.zoom_scale) // 2
+        y2 = event.y + (SQUARE_SIZE * self.zoom_scale) // 2
 
         if not len(self.rects) == 2:
-            rect = self.canvas.create_rectangle(x1, y1, x2, y2, outline='red', width=2)
+            rect = self.canvas.create_rectangle(
+                x1, y1, x2, y2, outline='red', width=2)
             self.rects.append(rect)
             # Salvar coordenadas do clique.
             self.points.append((event.x, event.y))
-
 
         if len(self.points) == 2:
             # Apos dois pontos selecionados calcular o HI.
@@ -824,16 +935,16 @@ class ROIHandler:
 
         # Definir caixas ao redor dos pontos.
         box1 = (
-            x1_original - SQUARE_SIZE // 2,
-            y1_original - SQUARE_SIZE // 2,
-            x1_original + SQUARE_SIZE // 2,
-            y1_original + SQUARE_SIZE // 2
+            max(0, int(x1 - SQUARE_SIZE // 2)),
+            max(0, int(y1 - SQUARE_SIZE // 2)),
+            min(self.img.width, int(x1 + SQUARE_SIZE // 2)),
+            min(self.img.height, int(y1 + SQUARE_SIZE // 2)),
         )
         box2 = (
-            x2_original - SQUARE_SIZE // 2,
-            y2_original - SQUARE_SIZE // 2,
-            x2_original + SQUARE_SIZE // 2,
-            y2_original + SQUARE_SIZE // 2
+            max(0, int(x2 - SQUARE_SIZE // 2)),
+            max(0, int(y2 - SQUARE_SIZE // 2)),
+            min(self.img.width, int(x2 + SQUARE_SIZE // 2)),
+            min(self.img.height, int(y2 + SQUARE_SIZE // 2)),
         )
 
         # Garantir que coordenadas estejam dentro dos limites da img.
@@ -866,10 +977,12 @@ class ROIHandler:
         hi = media1 / media2 if media2 != 0 else 1
 
         # Exibir valor de HI ao user.
-        tkinter.messagebox.showinfo("HI Calculado", f"O valor do HI e: {hi:.4f}")
+        tkinter.messagebox.showinfo(
+            "HI Calculado", f"O valor do HI e: {hi:.4f}")
 
         # Ajustar tons de cinza da ROI do figado.
-        ajustado_array = np.clip(np.round(array1 * hi), 0, 255).astype(np.uint8)
+        ajustado_array = np.clip(
+            np.round(array1 * hi), 0, 255).astype(np.uint8)
 
         # img ajustada do figado.
         ajustado_region1 = Image.fromarray(ajustado_array)
@@ -881,17 +994,24 @@ class ROIHandler:
         os.makedirs(figado_ajustado_dir, exist_ok=True)
 
         # Criar nomes de arquivo.
-        filename_liver_roi = f"ROI_FIGADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
-        filename_liver_roi_ajustado = f"ROI_FIGADO_AJUSTADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
+        if self.selected_patient_idx is None or self.selected_img_idx is None:
+            filename_liver_roi = "teste.png"
+            filename_liver_roi_ajustado = "teste_ajustado.png"
+        else:
+            filename_liver_roi = f"ROI_FIGADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
+            filename_liver_roi_ajustado = f"ROI_FIGADO_AJUSTADO_{self.selected_patient_idx:02d}_{self.selected_img_idx}.png"
+
 
         # Caminhos completos.
         save_path_liver = os.path.join(figado_dir, filename_liver_roi)
-        save_path_liver_ajustado = os.path.join(figado_ajustado_dir, filename_liver_roi_ajustado)
+        save_path_liver_ajustado = os.path.join(
+            figado_ajustado_dir, filename_liver_roi_ajustado)
 
         # Salvar imgs e informar user.
         region1.save(save_path_liver)
         ajustado_region1.save(save_path_liver_ajustado)
-        tkinter.messagebox.showinfo("Salvo", f"ROI do figado original salva em {save_path_liver}\nROI do figado ajustada salva em {save_path_liver_ajustado}")
+        tkinter.messagebox.showinfo("Salvo", f"ROI do figado original salva em {
+                                    save_path_liver}\nROI do figado ajustada salva em {save_path_liver_ajustado}")
 
         # Apagar retangulos desenhados no canvas.
         for rect in self.rects:
@@ -900,10 +1020,156 @@ class ROIHandler:
         # Resetar listas de pontos e retangulos.
         self.points = []
         self.rects = []
+        
+    def calcular_hi_jpg(self):
+        # Abrir nova janela para seleção de paciente e exibição de imagem
+        self.hi_window = customtkinter.CTkToplevel()
+        self.hi_window.title("Selecionar Imagem e Calcular HI")
+        self.hi_window.geometry("1000x600")
 
-#=========================================
+        # Configurar layout da nova janela
+        self.hi_window.grid_columnconfigure(0, weight=1)
+        self.hi_window.grid_columnconfigure(1, weight=4)
+        self.hi_window.grid_rowconfigure(0, weight=1)
+
+        # Lista de imagens carregadas
+        self.image_listbox = tkinter.Listbox(
+            self.hi_window, font=("Arial", 14)
+        )
+        self.image_listbox.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=10
+        )
+
+        # Canvas para exibir a imagem
+        self.canvas_frame = customtkinter.CTkFrame(self.hi_window)
+        self.canvas_frame.grid(
+            row=0, column=1, sticky="nsew", padx=10, pady=10
+        )
+
+        self.canvas = tkinter.Canvas(self.canvas_frame, width=600, height=600)
+        self.canvas.pack(fill="both", expand=True)
+
+        # Carregar imagens no formato .jpg ou .png
+        file_paths = filedialog.askopenfilenames(
+            filetypes=[("Imagens", "*.jpg;*.jpeg;*.png")]
+        )
+
+        if file_paths:
+            self.image_list = []  # Lista para armazenar todas as imagens carregadas
+
+            for file_path in file_paths:
+                try:
+                    # Carregar imagem e salvar na lista
+                    img = Image.open(file_path)
+                    self.image_list.append((img, file_path))
+                    self.image_listbox.insert(
+                        tkinter.END, os.path.basename(file_path)
+                    )
+                except Exception as e:
+                    tkinter.messagebox.showerror(
+                        "Erro", f"Erro ao carregar imagem: {e}"
+                    )
+
+        # Vincular seleção da lista à exibição da imagem
+        self.image_listbox.bind('<<ListboxSelect>>', self.on_select_jpg)
+
+    def on_select_jpg(self, event):
+        # Carregar a imagem selecionada
+        selection = self.image_listbox.curselection()
+        self.zoom_scale = 1
+        if selection:
+            index = selection[0]
+            image_data, file_path = self.image_list[index]
+
+            # Exibir a imagem no canvas
+            self.img = image_data.convert("L")
+            self.original_image = self.img.copy()  # Salvar a imagem original para permitir zoom
+            self.tk_img = ImageTk.PhotoImage(self.img)
+
+            # Limpar qualquer conteúdo anterior do canvas
+            self.canvas.delete("all")
+
+            self.image_x = 0
+            self.image_y = 0
+
+            # Exibir imagem no canvas
+            self.image_id = self.canvas.create_image(0, 0, anchor="nw", image=self.tk_img)
+
+            # Bind clique para selecionar pontos
+            self.canvas.bind("<MouseWheel>", self.zoom_image)
+            self.canvas.bind("<Button-1>", self.on_click_hi)
+            self.canvas.bind("<Button-3>", self.start_drag)    # Iniciar arrasto
+            self.canvas.bind("<B3-Motion>", self.drag_image)   # Arrastar imagem
+
+            # Bind para zoom na imagem usando roda do mouse
+
+
+            # Salvar o caminho do arquivo e índice
+            self.selected_file_path = file_path
+            self.selected_img_idx = index
+
+            # Resetar listas de pontos e retângulos
+            self.points = []
+            self.rects = []
+
+    def start_drag(self, event):
+        # Salvar a posição inicial do clique
+        self.start_x = event.x
+        self.start_y = event.y
+
+    def drag_image(self, event):
+        if self.image_id is None:
+            return
+
+        # Calcular deslocamento
+        dx = event.x - self.start_x
+        dy = event.y - self.start_y
+
+        # Mover a imagem no Canvas
+        self.image_x += dx
+        self.image_y += dy
+        self.canvas.move(self.image_id, dx, dy)
+
+        # Atualizar as posições dos retângulos
+        for rect in self.rects:
+            self.canvas.move(rect, dx, dy)
+
+        # Atualizar a posição inicial do mouse
+        self.start_x = event.x
+        self.start_y = event.y
+
+
+    def zoom_image(self, event):
+        if event.delta > 0:
+            self.zoom_scale *= 1.1
+        elif event.delta < 0:
+            self.zoom_scale /= 1.1
+
+        self.zoom_scale = max(0.1, min(self.zoom_scale, 5.0))
+
+        # Redimensionar a imagem
+        width, height = self.original_image.size
+        new_size = (int(width * self.zoom_scale), int(height * self.zoom_scale))
+        resized_image = self.original_image.resize(new_size, Image.Resampling.LANCZOS)
+        self.tk_img = ImageTk.PhotoImage(resized_image)
+        self.canvas.itemconfig(self.image_id, image=self.tk_img)
+        self.canvas.coords(self.image_id, self.image_x, self.image_y)
+
+        # Atualizar os retângulos no Canvas
+        for i, rect in enumerate(self.rects):
+            x, y = self.points[i]
+            x1 = self.image_x + x * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
+            y1 = self.image_y + y * self.zoom_scale - (SQUARE_SIZE * self.zoom_scale) // 2
+            x2 = self.image_x + x * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
+            y2 = self.image_y + y * self.zoom_scale + (SQUARE_SIZE * self.zoom_scale) // 2
+            self.canvas.coords(rect, x1, y1, x2, y2)
+
+
+
+# =========================================
 # Cálculo do SFM.
-#=========================================
+# =========================================
+
 
 class SFM:
     """
@@ -925,75 +1191,83 @@ class SFM:
         calcular_para_pasta
     """
 
-
     def __init__(self, app, Lr=4, Lc=4):
         self.app = app
         self.Lr = Lr
         self.Lc = Lc
-    
+
     def calcular_para_imagem(self, mask=None):
         filepath = filedialog.askopenfilename(
             title="Selecione a imagem",
             filetypes=[("Image files", "*.png *.jpg *.jpeg *.bmp")]
         )
-        
+
         if not filepath:
             print("Selecao de arquivo cancelada pelo usuario.")
             return
-        
+
         f = io.imread(filepath, as_gray=True)
         features, labels = pyfeats.sfm_features(f, mask, self.Lr, self.Lc)
-        
+
         feature_window = customtkinter.CTkToplevel(self.app)
         feature_window.title("Resultados das Caracteristicas SFM")
         feature_window.geometry("1000x700")
 
         table_frame = customtkinter.CTkFrame(feature_window)
-        table_frame.pack(fill="both", expand=True, side="left", padx=10, pady=10)
+        table_frame.pack(fill="both", expand=True,
+                         side="left", padx=10, pady=10)
 
         text_widget = customtkinter.CTkTextbox(table_frame, wrap="word")
         text_widget.pack(fill="both", expand=True)
 
-        text_widget.insert("end", f"Nome do Arquivo: {os.path.basename(filepath)}\n\n")
+        text_widget.insert("end", f"Nome do Arquivo: {
+                           os.path.basename(filepath)}\n\n")
         text_widget.insert("end", "Caracteristicas:\n")
-        
+
         for label, feature in zip(labels, features):
             text_widget.insert("end", f"{label}: {feature}\n")
-        
+
         text_widget.configure(state="disabled")
-        
-        img_frame = customtkinter.CTkFrame(feature_window, width=500, height=500)
-        img_frame.pack(side="right", fill="both", expand=True, padx=10, pady=10)
+
+        img_frame = customtkinter.CTkFrame(
+            feature_window, width=500, height=500)
+        img_frame.pack(side="right", fill="both",
+                       expand=True, padx=10, pady=10)
 
         pil_img = Image.open(filepath)
-        pil_img = pil_img.resize((500, 500), Image.LANCZOS)  # Redimensiona a img para 500x500
-        self.tk_img = ImageTk.PhotoImage(pil_img)  # Armazena a img como atributo da instancia
-        
-        img_label = customtkinter.CTkLabel(img_frame, image=self.tk_img, text="")  # Remove o texto padrao
+        # Redimensiona a img para 500x500
+        pil_img = pil_img.resize((500, 500), Image.LANCZOS)
+        # Armazena a img como atributo da instancia
+        self.tk_img = ImageTk.PhotoImage(pil_img)
+
+        img_label = customtkinter.CTkLabel(
+            img_frame, image=self.tk_img, text="")  # Remove o texto padrao
         img_label.pack(expand=True)
 
     def calcular_para_pasta(self):
         # Abre uma janela para o usuario selecionar o diretorio com as imagens.
         root = Tk()
         root.withdraw()  # Esconde a janela principal do Tkinter
-        directory = filedialog.askdirectory(title="Selecione a pasta com as imagens")
-        
+        directory = filedialog.askdirectory(
+            title="Selecione a pasta com as imagens")
+
         # Se o usuario cancelar a selecao da pasta, interrompe a execucao.
         if not directory:
             print("Selecao de pasta cancelada pelo usuario.")
             return
-        
+
         data = []
-        
+
         # Loop em todos os arquivos no diretorio e calcula o SFM para a pasta.
         for filename in os.listdir(directory):
-            if filename.endswith(".png") or filename.endswith(".jpg"): 
+            if filename.endswith(".png") or filename.endswith(".jpg"):
                 filepath = os.path.join(directory, filename)
-                
+
                 # Carrega a img e considera a img inteira como ROI.
                 f = io.imread(filepath, as_gray=True)
-                features, labels = pyfeats.sfm_features(f, None, self.Lr, self.Lc)
-                
+                features, labels = pyfeats.sfm_features(
+                    f, None, self.Lr, self.Lc)
+
                 # Adiciona os resultados à lista de dados.
                 row = [filename] + features.tolist()
                 data.append(row)
@@ -1001,13 +1275,13 @@ class SFM:
         # Cria um DataFrame com os resultados utilizando pandas.
         columns = ['Filename'] + labels
         df = pd.DataFrame(data, columns=columns)
-        
+
         save_path = filedialog.asksaveasfilename(
             defaultextension=".csv",
             initialfile="resultados_sfm_features.csv",
             filetypes=[("CSV files", "*.csv")]
         )
-        
+
         # Salva o DataFrame no arquivo CSV se o usuario escolher um caminho adequado.
         if save_path:
             df.to_csv(save_path, index=False)
@@ -1015,12 +1289,13 @@ class SFM:
         else:
             print("Salvamento cancelado pelo usuario.")
 
-#=========================================
+# =========================================
 # Classificador SVM.
-#=========================================
+# =========================================
+
 
 class SVMClassifier:
-    def __init__(self,app, kernel='linear', C=2.0):
+    def __init__(self, app, kernel='linear', C=2.0):
         self.app = app
         self.kernel = kernel
         self.C = C
@@ -1029,24 +1304,27 @@ class SVMClassifier:
         self.unique_patients = None
         self.svm = None
 
-        
         self.metrics_label = customtkinter.CTkLabel(
             app, text=":\nAcurácia: N/A\nSensibilidade: N/A\nEspecificidade: N/A"
         )
-        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")        
+        self.metrics_label.grid(
+            row=0, column=1, padx=20, pady=20, sticky="nsew")
 
     def load_data(self):
         # Carregar os dados do CSV
-        file_path = filedialog.askopenfilename(title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.askopenfilename(
+            title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
         if not file_path:
             raise ValueError("Nenhum arquivo CSV selecionado.")
         self.data = pd.read_csv(file_path, sep=";", encoding="latin1")
 
         # Mapear as classes para valores binários
-        self.data['Classe'] = self.data['Classe'].map({'Esteatose Hepática': 1, 'Saudável': 0})
+        self.data['Classe'] = self.data['Classe'].map(
+            {'Esteatose Hepática': 1, 'Saudável': 0})
 
         # Extrair pacientes (assumindo que o ID do paciente esteja no nome da imagem)
-        self.data['Paciente'] = self.data['Imagem'].str.extract(r'ROI_(\d+)', expand=False).astype(int)
+        self.data['Paciente'] = self.data['Imagem'].str.extract(
+            r'ROI_(\d+)', expand=False).astype(int)
 
         # Salvar pacientes únicos
         self.unique_patients = self.data['Paciente'].unique()
@@ -1069,7 +1347,8 @@ class SVMClassifier:
             X_train, X_test = X[train_indices], X[test_indices]
             y_train, y_test = y[train_indices], y[test_indices]
 
-            self.svm = SVC(kernel=self.kernel, C=self.C, class_weight='balanced')
+            self.svm = SVC(kernel=self.kernel, C=self.C,
+                           class_weight='balanced')
 
             self.svm.fit(X_train, y_train)
 
@@ -1077,7 +1356,8 @@ class SVMClassifier:
             y_pred = self.svm.predict(X_test)
 
             # Atualizar a matriz de confusão total
-            self.conf_matrix_total += confusion_matrix(y_test, y_pred, labels=[0, 1])
+            self.conf_matrix_total += confusion_matrix(
+                y_test, y_pred, labels=[0, 1])
 
     def calculate_metrics(self):
         # Extrair valores da matriz de confusão total
@@ -1085,10 +1365,13 @@ class SVMClassifier:
 
         # Cálculo das métricas
         accuracy = (tp + tn) / (tp + tn + fp + fn)  # Acurácia
-        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0  # Sensibilidade (Recall)
+        # Sensibilidade (Recall)
+        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
         specificity = tn / (tn + fp) if (tn + fp) > 0 else 0  # Especificidade
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0  # Precisão
-        f1_score = 2 * (precision * sensitivity) / (precision + sensitivity) if (precision + sensitivity) > 0 else 0  # F1-Score
+        f1_score = 2 * (precision * sensitivity) / (precision +
+                                                    # F1-Score
+                                                    sensitivity) if (precision + sensitivity) > 0 else 0
 
         # Atualizar o Label ou exibir no terminal
         self.metrics_label.configure(
@@ -1116,10 +1399,11 @@ class SVMClassifier:
     def predict_image(self):
         """Permite que o usuário escolha uma imagem, a processa e realiza a predição."""
         # Abrir seletor de arquivo
-        file_path = filedialog.askopenfilename(title="Selecione a imagem", 
-                                            filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+        file_path = filedialog.askopenfilename(title="Selecione a imagem",
+                                               filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
         if not file_path:
-            tkinter.messagebox.showinfo("Informação", "Nenhuma imagem selecionada.")
+            tkinter.messagebox.showinfo(
+                "Informação", "Nenhuma imagem selecionada.")
             return
 
         try:
@@ -1127,28 +1411,31 @@ class SVMClassifier:
             f = io.imread(file_path, as_gray=True)
             features, labels = pyfeats.sfm_features(f, None, 4, 4)
         except Exception as e:
-            tkinter.messagebox.showerror("Erro", f"Erro ao carregar a imagem ou extrair características: {e}")
+            tkinter.messagebox.showerror(
+                "Erro", f"Erro ao carregar a imagem ou extrair características: {e}")
             return
 
         try:
             # Processar GLCM
             glcm = GLCMHandler.process_image(self=app, roi_path=file_path)
         except Exception as e:
-            tkinter.messagebox.showerror("Erro", f"Erro ao processar GLCM: {e}")
+            tkinter.messagebox.showerror(
+                "Erro", f"Erro ao processar GLCM: {e}")
             return
 
         # Combinar as características SFM e GLCM
         all_features = list(features) + list(glcm.values())
-        
+
         # Criar o DataFrame no formato esperado pelo modelo
         columns = ['SFM_Coarseness', 'SFM_Contrast', 'SFM_Periodicity', 'SFM_Roughness',
-                'entropy_d1', 'homogeneity_d1', 'entropy_d2', 'homogeneity_d2',
-                'entropy_d4', 'homogeneity_d4', 'entropy_d8', 'homogeneity_d8']
+                   'entropy_d1', 'homogeneity_d1', 'entropy_d2', 'homogeneity_d2',
+                   'entropy_d4', 'homogeneity_d4', 'entropy_d8', 'homogeneity_d8']
         input_data = pd.DataFrame([all_features], columns=columns)
 
         # Verificar se o modelo foi treinado
         if self.svm is None:
-            tkinter.messagebox.showwarning("Aviso", "O modelo SVM ainda não foi treinado.")
+            tkinter.messagebox.showwarning(
+                "Aviso", "O modelo SVM ainda não foi treinado.")
             return
 
         # Fazer a predição com o SVM treinado
@@ -1156,20 +1443,23 @@ class SVMClassifier:
             prediction = self.svm.predict(input_data)
             print(prediction)
             result = "Esteatose Hepática" if prediction[0] == 1 else "Saudável"
-            tkinter.messagebox.showinfo("Resultado", f"A predição para a imagem é: {result}")
+            tkinter.messagebox.showinfo(
+                "Resultado", f"A predição para a imagem é: {result}")
         except Exception as e:
-            tkinter.messagebox.showerror("Erro", f"Erro ao realizar a predição: {e}")
-
+            tkinter.messagebox.showerror(
+                "Erro", f"Erro ao realizar a predição: {e}")
 
     def show_metrics(self):
-        self.metrics_label.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+        self.metrics_label.grid(
+            row=0, column=1, padx=20, pady=20, sticky="nsew")
 
     def hide_metrics(self):
         self.metrics_label.grid_remove()
 
-#=========================================
+# =========================================
 # Classificador ResNet50.
-#=========================================
+# =========================================
+
 
 class Resnet50:
     def __init__(self, app):
@@ -1189,20 +1479,23 @@ class Resnet50:
         img_array = preprocess_input(img_array)
         img_array = np.expand_dims(img_array, axis=0)
         return img_array
-    
+
     # CLASSIFICACAO DE IMAGENS
     def load_model(self):
-        file_path = filedialog.askopenfilename(title="Selecione o modelo", filetypes=[("H5 files", "*.h5")])
+        file_path = filedialog.askopenfilename(
+            title="Selecione o modelo", filetypes=[("H5 files", "*.h5")])
         if not file_path:
             raise ValueError("Nenhum modelo selecionado.")
         self.model = load_model(file_path)
 
     def classify_single_image(self):
         if not self.model:
-            raise ValueError("Modelo não foi carregado. Por favor, carregue o modelo primeiro.")
+            raise ValueError(
+                "Modelo não foi carregado. Por favor, carregue o modelo primeiro.")
 
         # Selecionar a imagem
-        img_path = filedialog.askopenfilename(title="Selecione uma imagem", filetypes=[("PNG files", "*.png")])
+        img_path = filedialog.askopenfilename(
+            title="Selecione uma imagem", filetypes=[("PNG files", "*.png")])
         if not img_path:
             raise ValueError("Nenhuma imagem selecionada.")
 
@@ -1223,9 +1516,7 @@ class Resnet50:
                   f"Diagnóstico: {diagnostico}")
         )
 
-   
     # Funções Auxiliares.
-   
 
     def load_and_preprocess_images(self, df, base_path, img_size=(224, 224)):
         X = []
@@ -1234,7 +1525,8 @@ class Resnet50:
             img_path = os.path.join(base_path, row['Imagem'])
             img = load_img(img_path, target_size=img_size, color_mode="rgb")
             img_array = img_to_array(img)
-            img_array = preprocess_input(img_array)  # Preprocessamento específico do ResNet50.
+            # Preprocessamento específico do ResNet50.
+            img_array = preprocess_input(img_array)
             X.append(img_array)
             y.append(row['Classe'])
         return np.array(X), np.array(y)
@@ -1279,8 +1571,10 @@ class Resnet50:
                 break
 
         # Cortar o excesso de imagens geradas.
-        X_minority_augmented = np.array(X_minority_augmented)[:num_samples_to_generate]
-        y_minority_augmented = np.array(y_minority_augmented)[:num_samples_to_generate]
+        X_minority_augmented = np.array(X_minority_augmented)[
+            :num_samples_to_generate]
+        y_minority_augmented = np.array(y_minority_augmented)[
+            :num_samples_to_generate]
 
         X_balanced = np.vstack((X_majority, X_minority, X_minority_augmented))
         y_balanced = np.hstack((y_majority, y_minority, y_minority_augmented))
@@ -1294,24 +1588,24 @@ class Resnet50:
 
     # modelo ResNet50 com regularização L2.
     def build_resnet50(self, input_shape=(224, 224, 3)):
-        base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+        base_model = ResNet50(weights='imagenet',
+                              include_top=False, input_shape=input_shape)
         # Congelar todas as camadas do modelo base.
         for layer in base_model.layers:
             layer.trainable = False
 
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
-        x = Dense(128, activation='relu', kernel_regularizer=l2(0.001))(x)  # Regularização L2.
+        # Regularização L2.
+        x = Dense(128, activation='relu', kernel_regularizer=l2(0.001))(x)
         x = Dropout(0.5)(x)
         output = Dense(1, activation='sigmoid')(x)
 
         model = Model(inputs=base_model.input, outputs=output)
         model.compile(optimizer=Adam(learning_rate=1e-4),
-                    loss='binary_crossentropy',
-                    metrics=['accuracy'])
+                      loss='binary_crossentropy',
+                      metrics=['accuracy'])
         return model
-
-
 
     def run(self):
         # Configuração de Diretórios para Resultados.
@@ -1322,9 +1616,10 @@ class Resnet50:
         os.makedirs(confusion_matrix_dir, exist_ok=True)
         os.makedirs(acc_graph_dir, exist_ok=True)
         os.makedirs(results_dir, exist_ok=True)
-       
+
         # Carregamento de Dados.
-        file_path = filedialog.askopenfilename(title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.askopenfilename(
+            title="Selecione o CSV", filetypes=[("CSV files", "*.csv")])
         if not file_path:
             raise ValueError("Nenhum arquivo CSV selecionado.")
 
@@ -1348,21 +1643,26 @@ class Resnet50:
                 class_column = col
                 break
         else:
-            raise KeyError(f"Nenhuma coluna correspondente a 'Classe' foi encontrada. As colunas disponíveis são: {data.columns.tolist()}")
+            raise KeyError(f"Nenhuma coluna correspondente a 'Classe' foi encontrada. As colunas disponíveis são: {
+                           data.columns.tolist()}")
 
-        data[class_column] = data[class_column].map({'Esteatose Hepática': 1, 'Saudável': 0})
+        data[class_column] = data[class_column].map(
+            {'Esteatose Hepática': 1, 'Saudável': 0})
 
         data.rename(columns={class_column: 'Classe'}, inplace=True)
 
         if 'Imagem' not in data.columns:
-            raise KeyError("A coluna 'Imagem' não foi encontrada no DataFrame. As colunas disponíveis são: {}".format(data.columns.tolist()))
+            raise KeyError("A coluna 'Imagem' não foi encontrada no DataFrame. As colunas disponíveis são: {}".format(
+                data.columns.tolist()))
 
         # Extrair o número do paciente.
-        data['Paciente'] = data['Imagem'].str.extract(r'ROI_(\d+)', expand=False)
+        data['Paciente'] = data['Imagem'].str.extract(
+            r'ROI_(\d+)', expand=False)
 
         # Verificar extração e converter para inteiro.
         if data['Paciente'].isnull().any():
-            raise ValueError("Não foi possível extrair o número do paciente de algumas imagens. Verifique o padrão do nome dos arquivos.")
+            raise ValueError(
+                "Não foi possível extrair o número do paciente de algumas imagens. Verifique o padrão do nome dos arquivos.")
 
         data['Paciente'] = data['Paciente'].astype(int)
 
@@ -1389,16 +1689,18 @@ class Resnet50:
             test_data = data[data['Paciente'] == patient]
             train_data = data[data['Paciente'] != patient]
 
-            X_train, y_train = self.load_and_preprocess_images(train_data, self.base_path)
+            X_train, y_train = self.load_and_preprocess_images(
+                train_data, self.base_path)
 
-            
-            X_test, y_test = self.load_and_preprocess_images(test_data, self.base_path)
+            X_test, y_test = self.load_and_preprocess_images(
+                test_data, self.base_path)
 
             print("Distribuição de classes no treinamento antes do balanceamento:")
             print(pd.Series(y_train).value_counts())
 
             # Aplicar balanceamento com aumento de dados.
-            X_train_balanced, y_train_balanced = self.balance_data_with_augmentation(X_train, y_train)
+            X_train_balanced, y_train_balanced = self.balance_data_with_augmentation(
+                X_train, y_train)
 
             print("Distribuição de classes no treinamento após o balanceamento:")
             print(pd.Series(y_train_balanced).value_counts())
@@ -1425,13 +1727,15 @@ class Resnet50:
             X_train_augmented = np.array(X_train_augmented)
             y_train_augmented = np.array(y_train_augmented)
 
-            class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y_train_augmented), y=y_train_augmented)
+            class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(
+                y_train_augmented), y=y_train_augmented)
             class_weights = dict(enumerate(class_weights))
 
             model = self.build_resnet50(input_shape=(224, 224, 3))
 
             # Callbacks.
-            early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            early_stopping = EarlyStopping(
+                monitor='val_loss', patience=10, restore_best_weights=True)
             checkpoint = ModelCheckpoint('def.keras', save_best_only=True)
 
             # Treinar o modelo sem gerador.
@@ -1471,7 +1775,8 @@ class Resnet50:
             target_names = ['Saudável', 'Esteatose Hepática']
 
             print("Relatório de Classificação:")
-            print(classification_report(y_test, y_pred, labels=labels, target_names=target_names, zero_division=0))
+            print(classification_report(y_test, y_pred, labels=labels,
+                  target_names=target_names, zero_division=0))
 
             # Plot matriz de confusao.
             plt.figure(figsize=(6, 4))
@@ -1481,18 +1786,21 @@ class Resnet50:
             plt.title(f"Matriz de Confusão - Paciente {patient}")
             plt.xlabel("Predito")
             plt.ylabel("Real")
-            plt.savefig(os.path.join(confusion_matrix_dir, f"paciente_{patient}.png"))
+            plt.savefig(os.path.join(confusion_matrix_dir,
+                        f"paciente_{patient}.png"))
             plt.close()
 
             # Plot gráfico de aprendizado.
             epochs_range = range(1, len(history.history['accuracy']) + 1)
 
-            plt.figure(figsize=(12,5))
+            plt.figure(figsize=(12, 5))
 
             # Gráfico de Acurácia.
             plt.subplot(1, 2, 1)
-            plt.plot(epochs_range, history.history['accuracy'], label="Acurácia de Treino")
-            plt.plot(epochs_range, history.history['val_accuracy'], label="Acurácia de Validação")
+            plt.plot(epochs_range,
+                     history.history['accuracy'], label="Acurácia de Treino")
+            plt.plot(
+                epochs_range, history.history['val_accuracy'], label="Acurácia de Validação")
             plt.title(f"Acurácia por Época - Paciente {patient}")
             plt.xlabel("Épocas")
             plt.ylabel("Acurácia")
@@ -1500,8 +1808,10 @@ class Resnet50:
 
             # Gráfico de Loss.
             plt.subplot(1, 2, 2)
-            plt.plot(epochs_range, history.history['loss'], label="Loss de Treino")
-            plt.plot(epochs_range, history.history['val_loss'], label="Loss de Validação")
+            plt.plot(epochs_range,
+                     history.history['loss'], label="Loss de Treino")
+            plt.plot(epochs_range,
+                     history.history['val_loss'], label="Loss de Validação")
             plt.title(f"Loss por Época - Paciente {patient}")
             plt.xlabel("Épocas")
             plt.ylabel("Loss")
@@ -1514,7 +1824,8 @@ class Resnet50:
         # Cálculo do tempo total
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"\nTempo total para o treinamento: {elapsed_time:.2f} segundos.")
+        print(f"\nTempo total para o treinamento: {
+              elapsed_time:.2f} segundos.")
 
         # Resultados finais.
         mean_accuracy = np.mean(accuracies)
@@ -1536,10 +1847,14 @@ class Resnet50:
         max_epochs = max([len(acc) for acc in history_accuracies])
 
         # Preencher com NaN para arrays de diferentes comprimentos.
-        history_accuracies_padded = np.array([np.pad(acc, (0, max_epochs - len(acc)), 'constant', constant_values=np.nan) for acc in history_accuracies])
-        history_val_accuracies_padded = np.array([np.pad(acc, (0, max_epochs - len(acc)), 'constant', constant_values=np.nan) for acc in history_val_accuracies])
-        history_losses_padded = np.array([np.pad(loss, (0, max_epochs - len(loss)), 'constant', constant_values=np.nan) for loss in history_losses])
-        history_val_losses_padded = np.array([np.pad(loss, (0, max_epochs - len(loss)), 'constant', constant_values=np.nan) for loss in history_val_losses])
+        history_accuracies_padded = np.array([np.pad(
+            acc, (0, max_epochs - len(acc)), 'constant', constant_values=np.nan) for acc in history_accuracies])
+        history_val_accuracies_padded = np.array([np.pad(acc, (0, max_epochs - len(
+            acc)), 'constant', constant_values=np.nan) for acc in history_val_accuracies])
+        history_losses_padded = np.array([np.pad(
+            loss, (0, max_epochs - len(loss)), 'constant', constant_values=np.nan) for loss in history_losses])
+        history_val_losses_padded = np.array([np.pad(loss, (0, max_epochs - len(
+            loss)), 'constant', constant_values=np.nan) for loss in history_val_losses])
 
         # Calcular a média ignorando os valores NaN.
         avg_accuracy = np.nanmean(history_accuracies_padded, axis=0)
